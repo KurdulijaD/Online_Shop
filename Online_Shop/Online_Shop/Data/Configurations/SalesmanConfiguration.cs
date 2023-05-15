@@ -16,7 +16,6 @@ namespace Online_Shop.Data.Configurations
             builder.Property(x => x.Address).HasMaxLength(30);
             builder.HasMany(x => x.Products)
                    .WithOne(x => x.Salesman);
-
         }
     }
 }
