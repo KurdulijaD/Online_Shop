@@ -13,8 +13,7 @@ namespace Online_Shop.Data.Configurations
 
             builder.HasMany(o => o.OrderProducts)
                 .WithOne(op => op.Order)
-                .HasForeignKey(op => op.OrderId)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
