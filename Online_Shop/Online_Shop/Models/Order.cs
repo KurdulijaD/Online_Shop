@@ -5,7 +5,6 @@ namespace Online_Shop.Models
     public class Order
     {
         public int Id { get; set; }
-        public string CustomerUsername { get; set; }
         public string Comment { get; set; }
         public string Address { get; set; }
         public double Price { get; set; }
@@ -14,5 +13,7 @@ namespace Online_Shop.Models
         public EOrderStatus Status { get; set; }
         public List<OrderProduct> OrderProducts { get; set; }
         public Customer Customer { get; set; }
+        public string CustomerUsername { get; set; }
+        public Salesman Salesman { get; set; }
     }
 }

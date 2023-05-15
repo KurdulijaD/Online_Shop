@@ -9,8 +9,6 @@ namespace Online_Shop.Data.Configurations
         public void Configure(EntityTypeBuilder<OrderProduct> builder)
         {
             builder.HasKey(op => new { op.OrderId, op.ProductId });
-            builder.HasOne(x => x.Order)
-                   .WithMany(x => x.OrderProducts);
         }
     }
 }

@@ -8,14 +8,10 @@ namespace Online_Shop.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
-            builder.HasKey(x => x.Username); 
-            builder.HasIndex(x => x.Username).IsUnique();
-            builder.HasIndex(x => x.Email).IsUnique();
-            builder.Property(x => x.Password).HasMaxLength(450);
-            builder.Property(x => x.Name).HasMaxLength(30);
-            builder.Property(x => x.Address).HasMaxLength(30);
-            builder.HasMany(x => x.Orders)
-                   .WithOne(x => x.Customer);
+            builder.HasMany(c => c.Orders)
+                .WithOne(o => o.Customer)
+                .HasForeignKey(o => o.CustomerUsername)
+                .IsRequired();
         }
     }
 }

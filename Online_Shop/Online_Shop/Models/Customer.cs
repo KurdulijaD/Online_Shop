@@ -5,5 +5,6 @@
         public bool Status { get; set; }
         public List<Order> Orders { get; set; }
         public Admin Admin { get; set; }
+        public string AdminUsername { get; set; }
     }
 }

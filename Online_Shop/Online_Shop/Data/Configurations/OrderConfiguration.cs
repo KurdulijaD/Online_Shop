@@ -8,13 +8,13 @@ namespace Online_Shop.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasMany(x => x.OrderProducts)
-                   .WithOne(x => x.Order);
-            builder.HasOne(x => x.Customer)
-                .WithMany(x => x.Orders)
-                .HasForeignKey(x => x.CustomerUsername);
+            builder.HasKey(o => o.Id);
+            builder.Property(o => o.Address).IsRequired();
+
+            builder.HasMany(o => o.OrderProducts)
+                .WithOne(op => op.Order)
+                .HasForeignKey(op => op.OrderId)
+                .IsRequired();
         }
     }
 }
