@@ -9,6 +9,7 @@ namespace Online_Shop.Data.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasKey(o => o.Id);
+            builder.Property(o => o.Id).ValueGeneratedOnAdd();
             builder.Property(o => o.Address).IsRequired();
 
             builder.HasMany(o => o.OrderProducts)

@@ -8,24 +8,25 @@ namespace Online_Shop.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Salesman> builder)
         {
-            builder.HasKey(u => u.Username);
-            builder.Property(u => u.Username).IsRequired();
-            builder.HasIndex(u => u.Username).IsUnique();
-            builder.Property(u => u.Email).IsRequired();
-            builder.HasIndex(u => u.Email).IsUnique();
-            builder.Property(u => u.Password).IsRequired().HasMaxLength(30);
-            builder.Property(u => u.Name).IsRequired().HasMaxLength(30);
-            builder.Property(u => u.BirthDate).IsRequired();
-            builder.Property(u => u.Address).IsRequired().HasMaxLength(30);
+            builder.HasKey(s => s.Id);
+            builder.Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Property(s => s.Username).IsRequired();
+            builder.HasIndex(s => s.Username).IsUnique();
+            builder.Property(s => s.Email).IsRequired();
+            builder.HasIndex(s => s.Email).IsUnique();
+            builder.Property(s => s.Password).IsRequired().HasMaxLength(30);
+            builder.Property(s => s.Name).IsRequired().HasMaxLength(30);
+            builder.Property(s => s.BirthDate).IsRequired();
+            builder.Property(s => s.Address).IsRequired().HasMaxLength(30);
 
             builder.HasMany(s => s.Products)
-                .WithOne(p => p.Salesman)
-                .HasForeignKey(p => p.SalesmanUsername)
+                .WithOne(s => s.Salesman)
+                .HasForeignKey(s => s.SalesmanId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(s => s.Orders)
-                .WithOne(o => o.Salesman);
+                .WithOne(s => s.Salesman);
         }
     }
 }

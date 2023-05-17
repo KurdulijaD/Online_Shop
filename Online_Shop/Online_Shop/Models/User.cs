@@ -4,6 +4,7 @@ namespace Online_Shop.Models
 {
     public abstract class User
     {
+        public int Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }    
@@ -11,5 +12,7 @@ namespace Online_Shop.Models
         public DateTime BirthDate { get; set; }
         public string Address { get; set; }
         public byte[] Image { get; set; }
+        public string Token { get; set; }
+
     }
 }

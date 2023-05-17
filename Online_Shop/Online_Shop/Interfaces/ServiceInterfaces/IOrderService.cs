@@ -1,6 +1,6 @@
 ﻿using Online_Shop.Dto;
 
-namespace Online_Shop.Interfaces
+namespace Online_Shop.Interfaces.ServiceInterfaces
 {
     public interface IOrderService
     {

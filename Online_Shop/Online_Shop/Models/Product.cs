@@ -11,6 +11,6 @@
         public List<OrderProduct> OrderProducts { get; set; }
         public bool Deleted { get; set; }
         public Salesman Salesman { get; set; }
-        public string SalesmanUsername { get; set; }
+        public int SalesmanId { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using Online_Shop.Data;
 namespace Online_Shop.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230515220608_InitialCreate")]
+    [Migration("20230517153839_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,8 +27,11 @@ namespace Online_Shop.Migrations
 
             modelBuilder.Entity("Online_Shop.Models.Admin", b =>
                 {
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -56,7 +59,15 @@ namespace Online_Shop.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.HasKey("Username");
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -69,17 +80,19 @@ namespace Online_Shop.Migrations
 
             modelBuilder.Entity("Online_Shop.Models.Customer", b =>
                 {
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("AdminUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -105,9 +118,17 @@ namespace Online_Shop.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.HasKey("Username");
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("AdminUsername");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -134,9 +155,8 @@ namespace Online_Shop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CustomerUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DeliveryTime")
                         .HasColumnType("datetime2");
@@ -147,18 +167,17 @@ namespace Online_Shop.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("SalesmanUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("SalesmanId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerUsername");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("SalesmanUsername");
+                    b.HasIndex("SalesmanId");
 
                     b.ToTable("Orders");
                 });
@@ -213,30 +232,31 @@ namespace Online_Shop.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("SalesmanUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("SalesmanId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SalesmanUsername");
+                    b.HasIndex("SalesmanId");
 
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Online_Shop.Models.Salesman", b =>
                 {
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("AdminUsername")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AdminId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -262,12 +282,20 @@ namespace Online_Shop.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Verified")
                         .HasColumnType("int");
 
-                    b.HasKey("Username");
+                    b.HasKey("Id");
 
-                    b.HasIndex("AdminUsername");
+                    b.HasIndex("AdminId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -282,7 +310,7 @@ namespace Online_Shop.Migrations
                 {
                     b.HasOne("Online_Shop.Models.Admin", "Admin")
                         .WithMany("Customers")
-                        .HasForeignKey("AdminUsername")
+                        .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -293,13 +321,13 @@ namespace Online_Shop.Migrations
                 {
                     b.HasOne("Online_Shop.Models.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerUsername")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Online_Shop.Models.Salesman", "Salesman")
                         .WithMany("Orders")
-                        .HasForeignKey("SalesmanUsername")
+                        .HasForeignKey("SalesmanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -331,7 +359,7 @@ namespace Online_Shop.Migrations
                 {
                     b.HasOne("Online_Shop.Models.Salesman", "Salesman")
                         .WithMany("Products")
-                        .HasForeignKey("SalesmanUsername")
+                        .HasForeignKey("SalesmanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -342,7 +370,7 @@ namespace Online_Shop.Migrations
                 {
                     b.HasOne("Online_Shop.Models.Admin", "Admin")
                         .WithMany("Salesmens")
-                        .HasForeignKey("AdminUsername")
+                        .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

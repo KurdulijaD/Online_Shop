@@ -13,7 +13,8 @@ namespace Online_Shop.Models
         public EOrderStatus Status { get; set; }
         public List<OrderProduct> OrderProducts { get; set; }
         public Customer Customer { get; set; }
-        public string CustomerUsername { get; set; }
+        public int CustomerId { get; set; }
         public Salesman Salesman { get; set; }
+        public int DeliveryPrice { get; } = 200;
     }
 }

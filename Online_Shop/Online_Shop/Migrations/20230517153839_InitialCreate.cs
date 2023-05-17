@@ -15,66 +15,75 @@ namespace Online_Shop.Migrations
                 name: "Admins",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Admins", x => x.Username);
+                    table.PrimaryKey("PK_Admins", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
-                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<bool>(type: "bit", nullable: false),
-                    AdminUsername = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AdminId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.Username);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Customers_Admins_AdminUsername",
-                        column: x => x.AdminUsername,
+                        name: "FK_Customers_Admins_AdminId",
+                        column: x => x.AdminId,
                         principalTable: "Admins",
-                        principalColumn: "Username");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Salesmens",
                 columns: table => new
                 {
-                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Verified = table.Column<int>(type: "int", nullable: false),
-                    AdminUsername = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AdminId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Salesmens", x => x.Username);
+                    table.PrimaryKey("PK_Salesmens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Salesmens_Admins_AdminUsername",
-                        column: x => x.AdminUsername,
+                        name: "FK_Salesmens_Admins_AdminId",
+                        column: x => x.AdminId,
                         principalTable: "Admins",
-                        principalColumn: "Username");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -89,22 +98,22 @@ namespace Online_Shop.Migrations
                     OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CustomerUsername = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SalesmanUsername = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    SalesmanId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerUsername",
-                        column: x => x.CustomerUsername,
+                        name: "FK_Orders_Customers_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Username");
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Orders_Salesmens_SalesmanUsername",
-                        column: x => x.SalesmanUsername,
+                        name: "FK_Orders_Salesmens_SalesmanId",
+                        column: x => x.SalesmanId,
                         principalTable: "Salesmens",
-                        principalColumn: "Username",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -120,16 +129,16 @@ namespace Online_Shop.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    SalesmanUsername = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    SalesmanId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Salesmens_SalesmanUsername",
-                        column: x => x.SalesmanUsername,
+                        name: "FK_Products_Salesmens_SalesmanId",
+                        column: x => x.SalesmanId,
                         principalTable: "Salesmens",
-                        principalColumn: "Username",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -170,9 +179,9 @@ namespace Online_Shop.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customers_AdminUsername",
+                name: "IX_Customers_AdminId",
                 table: "Customers",
-                column: "AdminUsername");
+                column: "AdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_Email",
@@ -192,24 +201,24 @@ namespace Online_Shop.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerUsername",
+                name: "IX_Orders_CustomerId",
                 table: "Orders",
-                column: "CustomerUsername");
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_SalesmanUsername",
+                name: "IX_Orders_SalesmanId",
                 table: "Orders",
-                column: "SalesmanUsername");
+                column: "SalesmanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_SalesmanUsername",
+                name: "IX_Products_SalesmanId",
                 table: "Products",
-                column: "SalesmanUsername");
+                column: "SalesmanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Salesmens_AdminUsername",
+                name: "IX_Salesmens_AdminId",
                 table: "Salesmens",
-                column: "AdminUsername");
+                column: "AdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Salesmens_Email",

@@ -9,6 +9,6 @@ namespace Online_Shop.Models
         public List<Product> Products { get; set; }
         public List<Order> Orders { get; set; }
         public Admin Admin { get; set; }
-        public string AdminUsername { get; set; }
+        public int AdminId { get; set; }
     }
 }
