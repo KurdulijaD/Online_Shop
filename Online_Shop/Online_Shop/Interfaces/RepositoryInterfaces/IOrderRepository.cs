@@ -7,7 +7,6 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
         IEnumerable<Order> GetAllOrders();
         Order GetOrderById(int id);
         Order CreateOrder(Order order);
-        Order UpdateOrder(int id, Order order);
-        bool DeleteOrder(int id);
+        Order DenieOrder(int id);
     }
 }

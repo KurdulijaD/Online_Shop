@@ -18,25 +18,23 @@ namespace Online_Shop.Repository
             _context.SaveChanges();
             return order;
         }
-
-        public bool DeleteOrder(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<Order> GetAllOrders()
         {
-            throw new NotImplementedException();
+            List<Order> orders = _context.Orders.ToList();
+            return orders;
         }
 
         public Order GetOrderById(int id)
         {
-            throw new NotImplementedException();
+            Order order = _context.Orders.Find((int)id);
+            return order;
         }
-
-        public Order UpdateOrder(int id, Order order)
+        public Order DenieOrder(int id)
         {
-            throw new NotImplementedException();
+            Order order = _context.Orders.Find((int)id);
+            order.Status = Common.EOrderStatus.DENIED;
+            _context.SaveChanges();
+            return order;
         }
     }
 }
