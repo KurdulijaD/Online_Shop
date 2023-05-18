@@ -10,13 +10,14 @@ namespace Online_Shop.Data.Configurations
         {
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.Name).IsRequired();
+            builder.Property(p => p.Name).IsRequired().HasMaxLength(30);
             builder.Property(p => p.Price).IsRequired();
             builder.Property(p => p.Amount).IsRequired();
 
-            builder.HasMany(p => p.OrderProducts)
-                .WithOne(op => op.Product)
-                .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(p => p.User)
+                .WithMany(p => p.Products)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

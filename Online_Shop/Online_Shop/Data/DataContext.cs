@@ -10,9 +10,7 @@ namespace Online_Shop.Data
         
         }
 
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Salesman> Salesmens { get; set; }
-        public DbSet<Admin> Admins { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }

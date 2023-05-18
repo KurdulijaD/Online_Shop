@@ -15,19 +15,33 @@ namespace Online_Shop.Repository
         public Order CreateOrder(Order order)
         {
             _context.Orders.Add(order);
-            _context.SaveChanges();
-            return order;
+            try
+            {
+                _context.SaveChanges();
+                return order;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
         public IEnumerable<Order> GetAllOrders()
         {
-            List<Order> orders = _context.Orders.ToList();
+            List<Order> orders = _context.Orders.Where(o => o.Status != Common.EOrderStatus.DENIED).ToList();
             return orders;
         }
 
         public Order GetOrderById(int id)
         {
-            Order order = _context.Orders.Find((int)id);
-            return order;
+            try
+            {
+                Order order = _context.Orders.Find((int)id);
+                return order;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
         public Order DenieOrder(int id)
         {
@@ -35,6 +49,12 @@ namespace Online_Shop.Repository
             order.Status = Common.EOrderStatus.DENIED;
             _context.SaveChanges();
             return order;
+        }
+
+        public IEnumerable<Order> GetAllInProgressOrders()
+        {
+            List<Order> orders = _context.Orders.Where(o => o.Status == Common.EOrderStatus.INPROGRESS).ToList();
+            return orders;
         }
     }
 }

@@ -9,6 +9,18 @@ namespace Online_Shop.Data.Configurations
         public void Configure(EntityTypeBuilder<OrderProduct> builder)
         {
             builder.HasKey(op => new { op.OrderId, op.ProductId });
+
+            builder.HasOne(op => op.Product)
+                .WithMany(op => op.OrderProducts)
+                .HasForeignKey(op => op.ProductId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(op => op.Order)
+                .WithMany(op => op.OrderProducts)
+                .HasForeignKey(op => op.OrderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -38,18 +38,18 @@ namespace Online_Shop.Repository
             return product;
         }
 
-        public Product UpdateProduct(int id, Product product)
+        public Product UpdateProduct(Product product)
         {
-            Product temp = _context.Products.Find((int)id);
-
-            temp.Name = product.Name;
-            temp.Price = product.Price;
-            temp.Description = product.Description;
-            temp.Amount = product.Amount;
-            temp.Image = product.Image;
-
-            _context.SaveChanges();
-            return temp;
+            try
+            {
+                _context.Products.Update(product);
+                _context.SaveChanges();
+                return product;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

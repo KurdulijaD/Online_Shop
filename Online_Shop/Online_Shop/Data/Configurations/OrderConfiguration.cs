@@ -10,10 +10,11 @@ namespace Online_Shop.Data.Configurations
         {
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
-            builder.Property(o => o.Address).IsRequired();
+            builder.Property(o => o.Address).IsRequired().HasMaxLength(30);
 
-            builder.HasMany(o => o.OrderProducts)
-                .WithOne(op => op.Order)
+            builder.HasOne(o => o.User)
+                .WithMany(o => o.Orders)
+                .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

@@ -1,18 +1,28 @@
 ﻿using Online_Shop.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Shop.Models
 {
-    public abstract class User
+    public class User
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }    
-        public string Name { get; set; }
+        [Required, RegularExpression(@"^[a-zA-Z0-9_]$")]
+        public string? Username { get; set; }
+        [Required, EmailAddress]
+        public string? Email { get; set; }
+        [Required, MinLength(5), MaxLength(30)]
+        public string? Password { get; set; }
+        [Required, MaxLength(30)]
+        public string? Name { get; set; }
+        [Required, DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
-        public string Address { get; set; }
-        public byte[] Image { get; set; }
-        public string Token { get; set; }
-
+        [Required, MaxLength(30)]
+        public string? Address { get; set; }
+        public byte[]? Image { get; set; }
+        public EUserType Type { get; set; }
+        public EVerificationStatus Verification { get; set; }
+        public string? Token { get; set; }
+        public List<Order>? Orders { get; set; }
+        public List<Product>? Products { get; set; }
     }
 }

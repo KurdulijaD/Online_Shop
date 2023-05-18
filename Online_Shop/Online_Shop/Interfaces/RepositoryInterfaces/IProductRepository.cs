@@ -6,7 +6,7 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
     {
         IEnumerable<Product> GetAllProducts();
         Product GetProductById(int id);
-        Product UpdateProduct(int id, Product product);
+        Product UpdateProduct(Product product);
         bool DeleteProduct(int id);
         Product CreateProduct(Product product);
     }
