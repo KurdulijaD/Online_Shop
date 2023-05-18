@@ -18,12 +18,19 @@ namespace Online_Shop.Repository
             return product;
         }
 
-        public bool DeleteProduct(int id)
+        public Product DeleteProduct(int id)
         {
-            Product product = _context.Products.Find((int)id);
-            product.Deleted = true;
-            _context.SaveChanges();
-            return true;
+            try
+            {
+                Product product = _context.Products.Find((int)id);
+                product.Deleted = true;
+                _context.SaveChanges();
+                return product;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public IEnumerable<Product> GetAllProducts()

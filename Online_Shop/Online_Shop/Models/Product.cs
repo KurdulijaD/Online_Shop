@@ -14,7 +14,7 @@ namespace Online_Shop.Models
         public string? Description { get; set; }
         public byte[]? Image { get; set; }
         public List<OrderProduct>? OrderProducts { get; set; }
-        public bool Deleted { get; set; }
+        public bool Deleted { get; set; } = false;
         public User? User { get; set; }
         public int UserId { get; set; }
     }

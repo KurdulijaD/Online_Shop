@@ -8,9 +8,7 @@ namespace Online_Shop.Mapping
     {
         public MappingProfile() 
         {
-            CreateMap<Admin, AdminDto>().ReverseMap();
-            CreateMap<Customer, CustomerDto>().ReverseMap();
-            CreateMap<Salesman, SalesmanDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<OrderProduct, OrderProductDto>().ReverseMap();

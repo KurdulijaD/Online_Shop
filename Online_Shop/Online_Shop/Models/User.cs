@@ -10,7 +10,7 @@ namespace Online_Shop.Models
         public string? Username { get; set; }
         [Required, EmailAddress]
         public string? Email { get; set; }
-        [Required, MinLength(5), MaxLength(30)]
+        [Required, MaxLength(30)]
         public string? Password { get; set; }
         [Required, MaxLength(30)]
         public string? Name { get; set; }
@@ -21,7 +21,6 @@ namespace Online_Shop.Models
         public byte[]? Image { get; set; }
         public EUserType Type { get; set; }
         public EVerificationStatus Verification { get; set; }
-        public string? Token { get; set; }
         public List<Order>? Orders { get; set; }
         public List<Product>? Products { get; set; }
     }
