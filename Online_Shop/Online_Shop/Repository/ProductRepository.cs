@@ -11,14 +11,21 @@ namespace Online_Shop.Repository
         {
             _context = dataContext;
         }
-        public Product CreateProduct(Product product)
+        public async Task<Product> CreateProduct(Product product)
         {
-            _context.Products.Add(product);
-            _context.SaveChanges();
-            return product;
+            try
+            {
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                return product;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public Product DeleteProduct(int id)
+        public async Task<Product> DeleteProduct(int id)
         {
             try
             {
@@ -33,19 +40,33 @@ namespace Online_Shop.Repository
             }
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProducts()
         {
-            List<Product> products = _context.Products.ToList();
-            return products;
+            try
+            {
+                List<Product> products = _context.Products.ToList();
+                return products;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public Product GetProductById(int id)
+        public async Task<Product> GetProductById(int id)
         {
-            Product product = _context.Products.Find((int)id);
-            return product;
+            try
+            {
+                Product product = _context.Products.Find((int)id);
+                return product;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public Product UpdateProduct(Product product)
+        public async Task<Product> UpdateProduct(Product product)
         {
             try
             {

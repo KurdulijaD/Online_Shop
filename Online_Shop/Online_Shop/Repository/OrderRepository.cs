@@ -12,7 +12,7 @@ namespace Online_Shop.Repository
         {
             _context = dataContext;
         }
-        public Order CreateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order)
         {
             _context.Orders.Add(order);
             try
@@ -25,13 +25,20 @@ namespace Online_Shop.Repository
                 return null;
             }
         }
-        public IEnumerable<Order> GetAllOrders()
+        public async Task<List<Order>> GetAllOrders()
         {
-            List<Order> orders = _context.Orders.Where(o => o.Status != Common.EOrderStatus.DENIED).ToList();
-            return orders;
+            try
+            {
+                List<Order> orders = _context.Orders.Where(o => o.Status != Common.EOrderStatus.DENIED).ToList();
+                return orders;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public Order GetOrderById(int id)
+        public async Task<Order> GetOrderById(int id)
         {
             try
             {
@@ -43,18 +50,32 @@ namespace Online_Shop.Repository
                 return null;
             }
         }
-        public Order DenieOrder(int id)
+        public async Task<Order> DenieOrder(int id)
         {
-            Order order = _context.Orders.Find((int)id);
-            order.Status = Common.EOrderStatus.DENIED;
-            _context.SaveChanges();
-            return order;
+            try
+            {
+                Order order = _context.Orders.Find((int)id);
+                order.Status = Common.EOrderStatus.DENIED;
+                _context.SaveChanges();
+                return order;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public IEnumerable<Order> GetAllInProgressOrders()
+        public async Task<List<Order>> GetAllInProgressOrders()
         {
-            List<Order> orders = _context.Orders.Where(o => o.Status == Common.EOrderStatus.INPROGRESS).ToList();
-            return orders;
+            try
+            {
+                List<Order> orders = _context.Orders.Where(o => o.Status == Common.EOrderStatus.INPROGRESS).ToList();
+                return orders;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

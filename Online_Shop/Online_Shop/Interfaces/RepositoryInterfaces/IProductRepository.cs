@@ -4,10 +4,10 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
 {
     public interface IProductRepository
     {
-        IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
-        Product UpdateProduct(Product product);
-        Product DeleteProduct(int id);
-        Product CreateProduct(Product product);
+        Task<List<Product>> GetAllProducts();
+        Task<Product> GetProductById(int id);
+        Task<Product> UpdateProduct(Product product);
+        Task<Product> DeleteProduct(int id);
+        Task<Product> CreateProduct(Product product);
     }
 }

@@ -4,10 +4,10 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
 {
     public interface IOrderRepository
     {
-        IEnumerable<Order> GetAllOrders();
-        IEnumerable<Order> GetAllInProgressOrders();
-        Order GetOrderById(int id);
-        Order CreateOrder(Order order);
-        Order DenieOrder(int id);
+        Task<List<Order>> GetAllOrders();
+        Task<List<Order>> GetAllInProgressOrders();
+        Task<Order> GetOrderById(int id);
+        Task<Order> CreateOrder(Order order);
+        Task<Order> DenieOrder(int id);
     }
 }

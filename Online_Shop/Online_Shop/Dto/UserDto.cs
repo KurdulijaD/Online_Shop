@@ -11,13 +11,13 @@ namespace Online_Shop.Dto
         public string Name { get; set; }
         public DateTime BirthDate { get; set; }
         public string Address { get; set; }
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
 
         public UserDto()
         {
             
         }
-        public UserDto(int id, string username, string email, string password, string name, DateTime birthDate, string address, byte[] image)
+        public UserDto(int id, string username, string email, string password, string name, DateTime birthDate, string address, string image)
         {
             Id = id;
             Username = username;

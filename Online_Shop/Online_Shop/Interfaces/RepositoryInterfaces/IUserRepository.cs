@@ -4,11 +4,12 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        User GetById(int id);
-        List<User> GetAll();
-        List<User> GetAllSalesmans();
-        User UpdateProfile(User newUser);
-        User Register(User user);
-        User AcceptVerification(string verificationStatus, int id);
+        Task<User> GetById(int id);
+        Task<List<User>> GetAll();
+        Task<List<User>> GetAllSalesmans();
+        Task<User> UpdateProfile(User newUser);
+        Task<User> Register(User user);
+        Task<User> AcceptVerification(int id);
+        Task<User> DenieVerification(int id);
     }
 }

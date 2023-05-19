@@ -15,28 +15,63 @@ namespace Online_Shop.Repository
         {
             _context = dataContext;
         }
-
-        public User AcceptVerification(string verificationStatus, int id)
+        public async Task<User> AcceptVerification(int id)
         {
-            User user = _context.Users.Find((int)id);
-            user.Verification = (EVerificationStatus)Enum.Parse(typeof(EVerificationStatus), verificationStatus);
-            _context.SaveChanges();
-            return user;
+            try
+            {
+                User? user = _context.Users.Find((int)id);
+                user.Verification = EVerificationStatus.ACCEPTED;
+                _context.SaveChanges();
+                return user;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<User> GetAll()
+        public async Task<User> DenieVerification(int id)
         {
-            List<User> users = _context.Users.ToList();
-            return users;
+            try
+            {
+                User? user = _context.Users.Find((int)id);
+                user.Verification = EVerificationStatus.DENIED;
+                _context.SaveChanges();
+                return user;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public List<User> GetAllSalesmans()
+        public async Task<List<User>> GetAll()
         {
-            List<User> salesmans = _context.Users.Where(s => s.Type == EUserType.SALESMAN).ToList();
-            return salesmans;
+            try
+            {
+                List<User> users = _context.Users.ToList();
+                return users;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public User GetById(int id)
+        public async Task<List<User>> GetAllSalesmans()
+        {
+            try
+            {
+                List<User> salesmans = _context.Users.Where(s => s.Type == EUserType.SALESMAN).ToList();
+                return salesmans;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public async Task<User> GetById(int id)
         {
             try
             {
@@ -49,7 +84,7 @@ namespace Online_Shop.Repository
             }
         }
 
-        public User Register(User user)
+        public async Task<User> Register(User user)
         {
             _context.Users.Add(user);
             try
@@ -63,7 +98,7 @@ namespace Online_Shop.Repository
             }
         }
 
-        public User UpdateProfile(User newUser)
+        public async Task<User> UpdateProfile(User newUser)
         {
             try
             {
