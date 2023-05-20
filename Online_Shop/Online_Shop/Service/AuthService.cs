@@ -5,6 +5,7 @@ using Online_Shop.Dto;
 using Online_Shop.Interfaces.RepositoryInterfaces;
 using Online_Shop.Interfaces.ServiceInterfaces;
 using Online_Shop.Models;
+using Online_Shop.Repository;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

@@ -8,7 +8,7 @@ namespace Online_Shop.Models
         [Required, MaxLength(30)]
         public string? Name { get; set; }
         [Required]
-        public double Price { get; set; }
+        public int Price { get; set; }
         [Required]
         public int Amount { get; set; }
         public string? Description { get; set; }
