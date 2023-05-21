@@ -10,7 +10,7 @@ namespace Online_Shop.Models
         public string? Username { get; set; }
         [Required, EmailAddress]
         public string? Email { get; set; }
-        [Required, MaxLength(30)]
+        [Required]
         public string? Password { get; set; }
         [Required, MaxLength(30)]
         public string? Name { get; set; }

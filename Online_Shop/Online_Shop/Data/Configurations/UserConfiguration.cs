@@ -13,7 +13,7 @@ namespace Online_Shop.Data.Configurations
             builder.Property(c => c.Username).IsRequired();
             builder.HasIndex(u => u.Username).IsUnique();
             builder.Property(c => c.Email).IsRequired();
-            builder.Property(c => c.Password).IsRequired().HasMaxLength(30);
+            builder.Property(c => c.Password).IsRequired();
             builder.Property(c => c.Name).IsRequired().HasMaxLength(30);
             builder.Property(c => c.BirthDate).IsRequired();
             builder.Property(c => c.Address).IsRequired().HasMaxLength(30);
