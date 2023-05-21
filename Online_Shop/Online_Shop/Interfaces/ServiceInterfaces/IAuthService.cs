@@ -4,6 +4,6 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
 {
     public interface IAuthService
     {
-        Task<string> Login(UserDto userDto);
+        Task<string> Login(LoginDto loginDto);
     }
 }

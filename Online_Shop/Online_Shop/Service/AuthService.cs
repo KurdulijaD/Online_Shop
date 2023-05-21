@@ -24,13 +24,13 @@ namespace Online_Shop.Service
             _mapper = mapper;
             _configuration = configuration;
         }
-        public async Task<string> Login(UserDto userDto)
+        public async Task<string> Login(LoginDto loginDto)
         {
             var users = await _repository.GetAll();
-            User? user = users.Where(u => u.Email == userDto.Email).FirstOrDefault();
+            User? user = users.Where(u => u.Email == loginDto.Email).FirstOrDefault();
             if (user == null)
-                throw new Exception($"User with {userDto.Email} doesn't exist! Try again.");
-            if (BCrypt.Net.BCrypt.Verify(user.Password, userDto.Password))
+                throw new Exception($"User with {loginDto.Email} doesn't exist! Try again.");
+            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
                 throw new Exception($"Password is incorrect! Try again.");
 
             var claims = new[] {
