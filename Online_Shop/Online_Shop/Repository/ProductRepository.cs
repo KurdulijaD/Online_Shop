@@ -40,11 +40,11 @@ namespace Online_Shop.Repository
             }
         }
 
-        public async Task<List<Product>> GetMyProducts(int id)
+        public async Task<List<Product>> GetAllProducts()
         {
             try
             {
-                List<Product> products = _context.Products.Where(p=> p.UserId == id && p.Deleted == false).ToList();
+                List<Product> products = _context.Products.ToList();
                 return products;
             }
             catch (Exception e)

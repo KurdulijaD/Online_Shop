@@ -52,7 +52,8 @@ namespace Online_Shop.Service
 
         public async Task<bool> DeleteProduct(int userId, int productId)
         {
-            List<Product> products = await _productRepository.GetMyProducts(userId);
+            List<Product> products = await _productRepository.GetAllProducts();
+            products = products.Where(p=> p.UserId ==  userId).ToList();
             Product p = products.Where(p => p.Id == productId).FirstOrDefault();
             if (p == null)
                 throw new NotFoundException($"Product with ID: {productId} doesn't exist.");
@@ -61,7 +62,8 @@ namespace Online_Shop.Service
 
         public async Task<List<ProductDto>> GetMyProducts(int id)
         {
-            List<Product> products = await _productRepository.GetMyProducts(id);
+            List<Product> products = await _productRepository.GetAllProducts();
+            products = products.Where(p => p.UserId == id).ToList();
             if (products == null)
                 throw new NotFoundException($"There are no products!");
             List<ProductDto> lista = _mapper.Map<List<Product>, List<ProductDto>>(products);
