@@ -29,7 +29,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                List<Order> orders = _context.Orders.Where(o => o.Status != Common.EOrderStatus.DENIED).ToList();
+                List<Order> orders = _context.Orders.ToList();
                 return orders;
             }
             catch (Exception e)
@@ -50,32 +50,9 @@ namespace Online_Shop.Repository
                 return null;
             }
         }
-        public async Task<Order> DenieOrder(int id)
+        public async Task SaveChanges()
         {
-            try
-            {
-                Order order = _context.Orders.Find((int)id);
-                order.Status = Common.EOrderStatus.DENIED;
-                _context.SaveChanges();
-                return order;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
-
-        public async Task<List<Order>> GetAllInProgressOrders()
-        {
-            try
-            {
-                List<Order> orders = _context.Orders.Where(o => o.Status == Common.EOrderStatus.INPROGRESS).ToList();
-                return orders;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            _context.SaveChanges();
         }
     }
 }
