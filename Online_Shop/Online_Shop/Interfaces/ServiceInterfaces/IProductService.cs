@@ -5,6 +5,7 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
 {
     public interface IProductService
     {
+        Task<List<ProductDto>> GetAll();
         Task<List<ProductDto>> GetMyProducts(int id);
         Task<ProductDto> GetProductById(int id);
         Task<ProductDto> UpdateProduct(int userId, int productId, UpdateProductDto productDto);

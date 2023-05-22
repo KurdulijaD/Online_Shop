@@ -50,7 +50,7 @@ namespace Online_Shop.Service
 
             }
 
-            OrderDto dto = _mapper.Map<OrderDto>(await _orderRepository.CreateOrder(newOrder));
+            OrderDto dto = _mapper.Map<Order, OrderDto>(await _orderRepository.CreateOrder(newOrder));
             return dto;
         }
 
@@ -159,7 +159,7 @@ namespace Online_Shop.Service
             Order o = await _orderRepository.GetOrderById(id);
             if (o == null)
                 throw new Exception($"Order with ID: {id} doesn't exist.");
-            return _mapper.Map<OrderDto>(o);
+            return _mapper.Map<Order, OrderDto>(o);
         }
 
         public async Task<List<OrderDto>> GetAllOrders()
