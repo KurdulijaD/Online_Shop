@@ -7,8 +7,8 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
     {
         Task<List<ProductDto>> GetAllProducts();
         Task<ProductDto> GetProductById(int id);
-        Task<ProductDto> UpdateProduct(ProductDto productDto);
-        Task<ProductDto> DeleteProduct(int id);
-        Task<ProductDto> CreateProduct(ProductDto productDto);
+        Task<ProductDto> UpdateProduct(int id, UpdateProductDto productDto);
+        Task<bool> DeleteProduct(int id);
+        Task<ProductDto> CreateProduct(int id, CreateProductDto productDto);
     }
 }

@@ -25,18 +25,18 @@ namespace Online_Shop.Repository
             }
         }
 
-        public async Task<Product> DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
             try
             {
                 Product product = _context.Products.Find((int)id);
                 product.Deleted = true;
                 _context.SaveChanges();
-                return product;
+                return true;
             }
             catch (Exception e)
             {
-                return null;
+                return false;
             }
         }
 

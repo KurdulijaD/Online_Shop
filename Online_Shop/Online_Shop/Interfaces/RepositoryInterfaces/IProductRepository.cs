@@ -7,7 +7,7 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
         Task<List<Product>> GetAllProducts();
         Task<Product> GetProductById(int id);
         Task<Product> UpdateProduct(Product product);
-        Task<Product> DeleteProduct(int id);
+        Task<bool> DeleteProduct(int id);
         Task<Product> CreateProduct(Product product);
     }
 }
