@@ -14,13 +14,13 @@ namespace Online_Shop.Data.Configurations
                 .WithMany(op => op.OrderProducts)
                 .HasForeignKey(op => op.ProductId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(op => op.Order)
                 .WithMany(op => op.OrderProducts)
                 .HasForeignKey(op => op.OrderId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

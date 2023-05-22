@@ -15,7 +15,7 @@ namespace Online_Shop.Data.Configurations
             builder.HasOne(o => o.User)
                 .WithMany(o => o.Orders)
                 .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
