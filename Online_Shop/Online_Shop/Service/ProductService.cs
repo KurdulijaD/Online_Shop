@@ -39,32 +39,33 @@ namespace Online_Shop.Service
             if (salesman == null)
                 throw new NotFoundException($"Salesman with ID: {id} doesn't exist.");
 
-            Product newProduct = _mapper.Map<Product>(productDto);
+            Product newProduct = _mapper.Map<CreateProductDto, Product>(productDto);
             newProduct.Image = Encoding.ASCII.GetBytes(productDto.Image);
             newProduct.Deleted = false;
             newProduct.User = salesman;
             newProduct.UserId = id;
 
-            ProductDto dto = _mapper.Map<ProductDto>(await _productRepository.CreateProduct(newProduct));
+            ProductDto dto = _mapper.Map<Product, ProductDto>(await _productRepository.CreateProduct(newProduct));
             dto.Image = Encoding.Default.GetString(newProduct.Image);
             return dto;
         }
 
-        public async Task<bool> DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int userId, int productId)
         {
-            List<Product> products = await _productRepository.GetAllProducts();
-            Product p = products.Where(p => p.Id == id).FirstOrDefault();
+            List<Product> products = await _productRepository.GetMyProducts(userId);
+            Product p = products.Where(p => p.Id == productId).FirstOrDefault();
             if (p == null)
-                throw new NotFoundException($"Product with ID: {id} doesn't exist.");
-            return await _productRepository.DeleteProduct(id);
+                throw new NotFoundException($"Product with ID: {productId} doesn't exist.");
+            return await _productRepository.DeleteProduct(productId);
         }
 
-        public async Task<List<ProductDto>> GetAllProducts()
+        public async Task<List<ProductDto>> GetMyProducts(int id)
         {
-            List<Product> products = await _productRepository.GetAllProducts();
+            List<Product> products = await _productRepository.GetMyProducts(id);
             if (products == null)
                 throw new NotFoundException($"There are no products!");
-            return _mapper.Map<List<ProductDto>>(products);
+            List<ProductDto> lista = _mapper.Map<List<Product>, List<ProductDto>>(products);
+            return lista;
         }
 
         public async Task<ProductDto> GetProductById(int id)
@@ -72,26 +73,29 @@ namespace Online_Shop.Service
             Product p = await _productRepository.GetProductById(id);
             if (p == null)
                 throw new NotFoundException($"Product with ID: {id} doesn't exist.");
-            return _mapper.Map<ProductDto>(p);
+            return _mapper.Map<Product, ProductDto>(p);
         }
 
-        public async Task<ProductDto> UpdateProduct(int id, UpdateProductDto productDto)
+        public async Task<ProductDto> UpdateProduct(int userId, int productId, UpdateProductDto productDto)
         {
-            Product p = await _productRepository.GetProductById(id);
+            Product p = await _productRepository.GetProductById(productId);
             if (p == null)
-                throw new NotFoundException($"Product with ID:{id} doesn't exist.");
+                throw new NotFoundException($"Product with ID:{productId} doesn't exist.");
+
+            if (p.UserId != userId)
+                throw new BadRequestException($"You can't update this product!");
 
             if (String.IsNullOrEmpty(productDto.Name) || String.IsNullOrEmpty(productDto.Amount.ToString()) ||
                 String.IsNullOrEmpty(productDto.Price.ToString()) || String.IsNullOrEmpty(productDto.Description))
-                throw new Exception($"You must fill in all fields for updating product!");
+                throw new BadRequestException($"You must fill in all fields for updating product!");
 
             if (productDto.Price < 1 || productDto.Amount < 1)
-                throw new Exception($"Invalid field values!");
+                throw new BadRequestException($"Invalid field values!");
 
-            p = _mapper.Map<Product>(productDto);
+            _mapper.Map(productDto, p);
             p.Image = Encoding.ASCII.GetBytes(productDto.Image);
 
-            ProductDto dto = _mapper.Map<ProductDto>(await _productRepository.UpdateProduct(p));
+            ProductDto dto = _mapper.Map<Product, ProductDto>(await _productRepository.UpdateProduct(p));
             dto.Image = Encoding.Default.GetString(p.Image);
             return dto;
         }

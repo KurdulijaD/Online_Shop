@@ -34,12 +34,13 @@ namespace Online_Shop.Service
                 throw new Exception($"Password is incorrect! Try again.");
 
             var claims = new[] {
-                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"] ?? "default"),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim("UserId", user.Id.ToString()),
                         new Claim("Email", user.Email),
                         new Claim(ClaimTypes.Role, user.Type.ToString()),
+                        new Claim("Verification", user.Verification.ToString())
+
                     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "default"));

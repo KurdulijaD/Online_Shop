@@ -30,6 +30,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/user
+        [Authorize]
         [HttpGet("GetMyProfile")]
         public async Task<IActionResult> GetMyProfile()
         {
@@ -51,6 +52,7 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody]RegisterDto registerDto)
         {
             UserDto user = await _service.Register(registerDto);
@@ -60,6 +62,7 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Put(UpdateProfileDto profileDto)
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
@@ -70,6 +73,7 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPut("AcceptVerification/id")]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> AcceptVerification(int id)
         {
             UserDto user = await _service.AcceptVerification(id);
@@ -79,6 +83,7 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPut("DenieVerification/id")]
+        [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> DenieVerification(int id)
         {
             UserDto user = await _service.DenieVerification(id);

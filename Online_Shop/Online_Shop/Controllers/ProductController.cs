@@ -21,19 +21,20 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/product
-        [HttpGet]
-        //[Authorize(Roles = "SALESMAN")]
-        public async Task<IActionResult> Get()
+        [HttpGet("GetMyProducts")]
+        [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
+        public async Task<IActionResult> GetMyProducts()
         {
-            List<ProductDto> users = await _service.GetAllProducts();
-            if (users == null)
+            int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
+            List<ProductDto> products = await _service.GetMyProducts(id);
+            if (products == null)
                 return BadRequest();
-            return Ok(users);
+            return Ok(products);
         }
 
         //GET api/product/id
         [HttpGet("{id}")]
-        //[Authorize(Roles = "SALESMAN")]
+        [Authorize(Roles = "SALESMAN")]
         public async Task<IActionResult> Get(int id)
         {
             ProductDto productDto = await _service.GetProductById(id);
@@ -44,7 +45,7 @@ namespace Online_Shop.Controllers
 
         //POST api/product
         [HttpPost]
-        //[Authorize(Roles = "SALESMAN")]
+        [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
         public async Task<IActionResult> Post([FromBody] CreateProductDto productDto)
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
@@ -55,23 +56,24 @@ namespace Online_Shop.Controllers
         }
 
         //PUT api/product
-        [HttpPut]
-        //[Authorize(Roles = "SALESMAN")]
-        public async Task<IActionResult> Put([FromBody] UpdateProductDto productDto)
+        [HttpPut("{id}")]
+        [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateProductDto productDto)
         {
-            int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
-            ProductDto product = await _service.UpdateProduct(id, productDto);
+            int userId = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
+            ProductDto product = await _service.UpdateProduct(userId, id, productDto);
             if (product == null)
                 return BadRequest();
             return Ok(product);
         }
 
         //DELETE api/product/id
-        [HttpDelete]
-        //[Authorize(Roles = "SALESMAN")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _service.DeleteProduct(id);
+            int userId = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
+            bool deleted = await _service.DeleteProduct(userId, id);
             if (deleted == false)
                 return BadRequest();
             return Ok();

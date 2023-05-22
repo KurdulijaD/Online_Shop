@@ -40,11 +40,11 @@ namespace Online_Shop.Repository
             }
         }
 
-        public async Task<List<Product>> GetAllProducts()
+        public async Task<List<Product>> GetMyProducts(int id)
         {
             try
             {
-                List<Product> products = _context.Products.ToList();
+                List<Product> products = _context.Products.Where(p=> p.UserId == id && p.Deleted == false).ToList();
                 return products;
             }
             catch (Exception e)
@@ -58,6 +58,8 @@ namespace Online_Shop.Repository
             try
             {
                 Product product = _context.Products.Find((int)id);
+                if (product.Deleted)
+                    return null;
                 return product;
             }
             catch (Exception e)
