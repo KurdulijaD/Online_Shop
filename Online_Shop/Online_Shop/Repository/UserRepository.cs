@@ -4,6 +4,8 @@ using Online_Shop.Common;
 using Online_Shop.Data;
 using Online_Shop.Interfaces.RepositoryInterfaces;
 using Online_Shop.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Online_Shop.Repository
 {
@@ -49,7 +51,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                List<User> users = _context.Users.ToList();
+                List<User> users = _context.Users.Include(u => u.Orders).ToList();
                 return users;
             }
             catch (Exception e)
@@ -62,7 +64,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                List<User> salesmans = _context.Users.Where(s => s.Type == EUserType.SALESMAN).ToList();
+                List<User> salesmans = _context.Users.Include(u => u.Products).Where(s => s.Type == EUserType.SALESMAN).ToList();
                 return salesmans;
             }
             catch (Exception e)
@@ -75,7 +77,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                User user = _context.Users.Find((int)id);
+                User user = _context.Users.Include(o => o.Orders).Where(o => o.Id == id).FirstOrDefault();
                 return user;
             }
             catch (Exception e)

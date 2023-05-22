@@ -81,7 +81,7 @@ namespace Online_Shop.Controllers
         public async Task<IActionResult> GetSalesmanInProgressOrders()
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
-            List<OrderDto> orders = await _service.GetAllDeliveredOrders(id);
+            List<OrderDto> orders = await _service.GetAllInProgressOrders(id);
             if (orders == null)
                 return BadRequest();
             return Ok(orders);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Online_Shop.Dto;
 using Online_Shop.Exceptions;
 using Online_Shop.Interfaces.RepositoryInterfaces;
@@ -100,9 +101,9 @@ namespace Online_Shop.Service
 
                 foreach (Order o in allOrders)
                 {
-                    foreach (Product p in products)
+                    foreach(OrderProduct op in o.OrderProducts)
                     {
-                        foreach (OrderProduct op in o.OrderProducts)
+                        foreach (Product p in products)
                         {
                             if (p.Id == op.ProductId)
                                 salesmanOrders.Add(o);

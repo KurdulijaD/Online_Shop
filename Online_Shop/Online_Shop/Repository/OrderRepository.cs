@@ -1,6 +1,8 @@
 ﻿using Online_Shop.Data;
 using Online_Shop.Interfaces.RepositoryInterfaces;
 using Online_Shop.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Online_Shop.Repository
 {
@@ -29,7 +31,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                List<Order> orders = _context.Orders.ToList();
+                List<Order> orders = _context.Orders.Include(o => o.OrderProducts).ThenInclude(op => op.Product).ToList();
                 return orders;
             }
             catch (Exception e)
@@ -42,7 +44,7 @@ namespace Online_Shop.Repository
         {
             try
             {
-                Order order = _context.Orders.Find((int)id);
+                Order order = _context.Orders.Include(o => o.OrderProducts).Where(o => o.Id == id).FirstOrDefault();
                 return order;
             }
             catch (Exception e)
