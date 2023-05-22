@@ -16,6 +16,7 @@ namespace Online_Shop.Controllers
             _service = service;
         }
 
+        //POST api/auth
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] LoginDto loginDto)
         {

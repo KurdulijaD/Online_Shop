@@ -13,7 +13,9 @@ namespace Online_Shop.Models
         [Required]
         public string? Password { get; set; }
         [Required, MaxLength(30)]
-        public string? Name { get; set; }
+        public string? FirstName { get; set; }
+        [Required, MaxLength(30)]
+        public string? LastName { get; set; }
         [Required, DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
         [Required, MaxLength(30)]

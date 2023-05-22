@@ -18,10 +18,10 @@ namespace Online_Shop.Controllers
             _service = service;
         }
 
-        //GET api/user
-        [HttpGet]
+        //GET api/user/GetAllUsers
+        [HttpGet("GetAllUsers")]
         [Authorize(Roles = "ADMINISTRATOR")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAllUsers()
         {
             List<UserDto> users = await _service.GetAll();
             if (users == null)
@@ -29,11 +29,11 @@ namespace Online_Shop.Controllers
             return Ok(users);
         }
 
-        //GET api/user/id
-        [HttpGet("{id}")]
-        [Authorize(Roles = "ADMINISTRATOR")]
-        public async Task<IActionResult> Get(int id)
+        //GET api/user
+        [HttpGet("GetMyProfile")]
+        public async Task<IActionResult> GetMyProfile()
         {
+            int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
             UserDto user = await _service.GetById(id);
             if (user == null)
                 return BadRequest();
@@ -51,18 +51,19 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]UserDto userDto)
+        public async Task<IActionResult> Post([FromBody]RegisterDto registerDto)
         {
-            UserDto user = await _service.Register(userDto);
+            UserDto user = await _service.Register(registerDto);
             if (user == null)
                 return BadRequest();
             return Ok(user);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UserDto userDto)
+        public async Task<IActionResult> Put(UpdateProfileDto profileDto)
         {
-            UserDto user = await _service.UpdateProfile(userDto);
+            int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
+            UserDto user = await _service.UpdateProfile(id, profileDto);
             if (user == null)
                 return BadRequest();
             return Ok(user);

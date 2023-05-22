@@ -8,8 +8,8 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
         Task<UserDto> GetById(int id);
         Task<List<UserDto>> GetAll();
         Task<List<UserDto>> GetAllSalesmans();
-        Task<UserDto> UpdateProfile(UserDto userDto);
-        Task<UserDto> Register(UserDto userDto);
+        Task<UserDto> UpdateProfile(int id, UpdateProfileDto profileDto);
+        Task<UserDto> Register(RegisterDto registerDto);
         Task<UserDto> AcceptVerification(int id);
         Task<UserDto> DenieVerification(int id);
     }
