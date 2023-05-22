@@ -15,10 +15,12 @@ namespace Online_Shop.Service
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public UserService(IUserRepository repository, IMapper mapper, IConfiguration configuration)
+        public UserService(IUserRepository repository, IEmailService emailService, IMapper mapper, IConfiguration configuration)
         {
             _repository = repository;
+            _emailService = emailService;
             _mapper = mapper;
             _configuration = configuration;
         }
@@ -31,6 +33,10 @@ namespace Online_Shop.Service
                 throw new BadRequestException($"Cant change verification anymore!");
 
             u = await _repository.AcceptVerification(id);
+            if(u != null)
+            {
+                _emailService.SendEmail(u.Email, u.Verification.ToString());
+            }
             return _mapper.Map<User, UserDto>(u);
         }
 
@@ -43,6 +49,10 @@ namespace Online_Shop.Service
                 throw new BadRequestException($"Cant change verification anymore!");
 
             u = await _repository.DenieVerification(id);
+            if (u != null)
+            {
+                _emailService.SendEmail(u.Email, u.Verification.ToString());
+            }
             return _mapper.Map<User, UserDto>(u);
         }
 
