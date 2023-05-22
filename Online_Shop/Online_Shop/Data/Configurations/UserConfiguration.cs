@@ -20,8 +20,8 @@ namespace Online_Shop.Data.Configurations
             builder.Property(c => c.LastName).IsRequired().HasMaxLength(30);
             builder.Property(c => c.BirthDate).IsRequired();
             builder.Property(c => c.Address).IsRequired().HasMaxLength(30);
-            builder.Property(c => c.Type).HasConversion(new EnumToStringConverter<EUserType>();
-            builder.Property(c => c.Verification).HasConversion(new EnumToStringConverter<EVerificationStatus>();
+            builder.Property(c => c.Type).HasConversion(new EnumToStringConverter<EUserType>());
+            builder.Property(c => c.Verification).HasConversion(new EnumToStringConverter<EVerificationStatus>());
         }
     }
 }

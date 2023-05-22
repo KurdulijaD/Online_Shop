@@ -74,9 +74,6 @@ namespace Online_Shop.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
                     b.HasKey("OrderId", "ProductId");
 
                     b.HasIndex("ProductId");
@@ -96,7 +93,9 @@ namespace Online_Shop.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -142,10 +141,15 @@ namespace Online_Shop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
@@ -154,15 +158,17 @@ namespace Online_Shop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Verification")
-                        .HasColumnType("int");
+                    b.Property<string>("Verification")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -177,7 +183,7 @@ namespace Online_Shop.Migrations
                     b.HasOne("Online_Shop.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -188,13 +194,13 @@ namespace Online_Shop.Migrations
                     b.HasOne("Online_Shop.Models.Order", "Order")
                         .WithMany("OrderProducts")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Online_Shop.Models.Product", "Product")
                         .WithMany("OrderProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -207,7 +213,7 @@ namespace Online_Shop.Migrations
                     b.HasOne("Online_Shop.Models.User", "User")
                         .WithMany("Products")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");

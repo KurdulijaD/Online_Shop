@@ -20,12 +20,13 @@ namespace Online_Shop.Migrations
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Verification = table.Column<int>(type: "int", nullable: false)
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Verification = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,7 +55,8 @@ namespace Online_Shop.Migrations
                         name: "FK_Orders_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,7 +70,7 @@ namespace Online_Shop.Migrations
                     Amount = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -79,7 +81,7 @@ namespace Online_Shop.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -88,8 +90,7 @@ namespace Online_Shop.Migrations
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Amount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,12 +99,14 @@ namespace Online_Shop.Migrations
                         name: "FK_OrderProducts_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrderProducts_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

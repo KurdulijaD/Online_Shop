@@ -33,10 +33,10 @@ namespace Online_Shop.Service
             newOrder.DeliveryPrice = 200;
             newOrder.Status = Common.EOrderStatus.INPROGRESS;
 
-            foreach(OrderProduct op in newOrder.OrderProducts)
-            {
-                newOrder.Price += op.Price * op.Amount;
-            }
+            //foreach(OrderProduct op in newOrder.OrderProducts)
+            //{
+            //    newOrder.Price += op.Price * op.Amount;
+            //}
 
             OrderDto dto = _mapper.Map<OrderDto>(await _repository.CreateOrder(newOrder));
             return dto;
