@@ -6,9 +6,10 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
     public interface IOrderService
     {
         Task<List<OrderDto>> GetAllOrders();
-        Task<List<OrderDto>> GetAllInProgressOrders();
+        Task<List<OrderDto>> GetAllDeliveredOrders(int id);
+        Task<List<OrderDto>> GetAllInProgressOrders(int id);
         Task<OrderDto> GetOrderById(int id);
-        Task<OrderDto> CreateOrder(OrderDto orderDto);
-        Task<OrderDto> DenieOrder(int id);
+        Task<OrderDto> CreateOrder(int userId, CreateOrderDto orderDto);
+        Task<bool> DenieOrder(int id);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Online_Shop.Dto;
+using Online_Shop.Exceptions;
 using Online_Shop.Interfaces.RepositoryInterfaces;
 using Online_Shop.Interfaces.ServiceInterfaces;
 using Online_Shop.Models;
@@ -10,68 +11,161 @@ namespace Online_Shop.Service
 {
     public class OrderService : IOrderService
     {
-        private readonly IOrderRepository _repository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-
-        public OrderService(IOrderRepository repository, IMapper mapper, IConfiguration configuration)
+        private readonly IUserRepository _userRepository;
+        private readonly IProductRepository _productRepository;
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository, IMapper mapper, IConfiguration configuration)
         {
-            _repository = repository;
+            _orderRepository = orderRepository;
+            _userRepository = userRepository;
+            _productRepository = productRepository;
             _mapper = mapper;
             _configuration = configuration;
         }
 
-        public async Task<OrderDto> CreateOrder(OrderDto orderDto)
+        public async Task<OrderDto> CreateOrder(int userId, CreateOrderDto orderDto)
         {
-            Order newOrder = _mapper.Map<Order>(orderDto);
-
-            if (String.IsNullOrEmpty(newOrder.Address))
+            if (String.IsNullOrEmpty(orderDto.Address))
                 throw new Exception($"You must fill field for address!");
 
+            Order newOrder = _mapper.Map<CreateOrderDto, Order>(orderDto);
+            newOrder.UserId = userId;
             newOrder.OrderTime = DateTime.Now;
-            newOrder.DeliveryTime = new Random().Next(1, 13);
+            newOrder.DeliveryTime = DateTime.Now.AddHours(1).AddMinutes(new Random().Next(60));
             newOrder.DeliveryPrice = 200;
             newOrder.Status = Common.EOrderStatus.INPROGRESS;
 
-            //foreach(OrderProduct op in newOrder.OrderProducts)
-            //{
-            //    newOrder.Price += op.Price * op.Amount;
-            //}
+            foreach (OrderProduct op in newOrder.OrderProducts)
+            {
+                Product p = await _productRepository.GetProductById(op.ProductId);
 
-            OrderDto dto = _mapper.Map<OrderDto>(await _repository.CreateOrder(newOrder));
+                if (op.Amount > p.Amount)
+                    throw new BadRequestException("There is not enough amount of this product.");
+
+                op.ProductId = p.Id;
+                p.Amount -= op.Amount;
+                newOrder.Price += op.Amount * p.Price;
+
+            }
+
+            OrderDto dto = _mapper.Map<OrderDto>(await _orderRepository.CreateOrder(newOrder));
             return dto;
         }
 
-        public async Task<OrderDto> DenieOrder(int id)
+        public async Task<bool> DenieOrder(int id)
         {
-            Order o = await _repository.DenieOrder(id);
+            Order o = await _orderRepository.GetOrderById(id);
             if (o == null)
                 throw new Exception($"Order with ID: {id} doesn't exist.");
-            return _mapper.Map<OrderDto>(o);
+            o.Status = Common.EOrderStatus.DENIED;
+            List<Product> products = await _productRepository.GetAllProducts();
+            foreach(OrderProduct op in o.OrderProducts)
+            {
+                foreach(Product p in products)
+                {
+                    if(p.Id == op.ProductId)
+                    {
+                        p.Amount += op.Amount;
+                    }
+                }
+            }
+            _orderRepository.SaveChanges();
+            return true;
         }
 
-        public async Task<List<OrderDto>> GetAllInProgressOrders()
+        public async Task<List<OrderDto>> GetAllInProgressOrders(int id)
         {
-            List<Order> orders = await _repository.GetAllInProgressOrders();
-            if (orders == null)
-                throw new Exception($"There are no orders in progress!");
-            return _mapper.Map<List<OrderDto>>(orders);
-        }
+            User user = await _userRepository.GetById(id);
+            if (user == null)
+                throw new NotFoundException($"User with id:{id} doesn't exist!");
 
-        public async Task<List<OrderDto>> GetAllOrders()
-        {
-            List<Order> orders = await _repository.GetAllOrders();
-            if (orders == null)
+            List<Order> allOrders = await _orderRepository.GetAllOrders();
+            allOrders = allOrders.Where(o => o.Status == Common.EOrderStatus.INPROGRESS).ToList();
+            if (allOrders == null)
                 throw new Exception($"There are no orders!");
-            return _mapper.Map<List<OrderDto>>(orders);
+
+            if (user.Type == Common.EUserType.CUSTOMER)
+            {
+                List<Order> customerOrders = new List<Order>();
+                customerOrders = allOrders.Where(o => o.UserId == user.Id).ToList();
+                return _mapper.Map<List<Order>, List<OrderDto>>(customerOrders);
+            }
+            else if (user.Type == Common.EUserType.SALESMAN)
+            {
+                List<Order> salesmanOrders = new List<Order>();
+                List<Product> products = await _productRepository.GetAllProducts();
+                products = products.Where(p => p.UserId == user.Id).ToList();
+
+                foreach (Order o in allOrders)
+                {
+                    foreach (Product p in products)
+                    {
+                        foreach (OrderProduct op in o.OrderProducts)
+                        {
+                            if (p.Id == op.ProductId)
+                                salesmanOrders.Add(o);
+                        }
+                    }
+                }
+                return _mapper.Map<List<Order>, List<OrderDto>>(salesmanOrders);
+            }
+            return null;
+        }
+
+        public async Task<List<OrderDto>> GetAllDeliveredOrders(int id)
+        {
+            User user = await _userRepository.GetById(id);
+            if (user == null)
+                throw new NotFoundException($"User with id:{id} doesn't exist!");
+
+            List<Order> allOrders = await _orderRepository.GetAllOrders();
+            allOrders = allOrders.Where(o => o.Status == Common.EOrderStatus.DELIVERED).ToList();
+            if (allOrders == null)
+                throw new Exception($"There are no orders!");
+
+            if (user.Type == Common.EUserType.CUSTOMER)
+            {
+                List<Order> customerOrders = new List<Order>();
+                customerOrders = allOrders.Where(o => o.UserId == user.Id).ToList();
+                return _mapper.Map<List<Order>, List<OrderDto>>(customerOrders);
+            }
+            else if(user.Type == Common.EUserType.SALESMAN)
+            {
+                List<Order> salesmanOrders = new List<Order>();
+                List<Product> products = await _productRepository.GetAllProducts();
+                products = products.Where(p => p.UserId == user.Id).ToList();
+
+                foreach (Order o in allOrders)
+                {
+                    foreach(Product p in products)
+                    {
+                        foreach(OrderProduct op in o.OrderProducts)
+                        {
+                            if (p.Id == op.ProductId)
+                                salesmanOrders.Add(o);
+                        }
+                    }
+                }
+                return _mapper.Map<List<Order>, List<OrderDto>>(salesmanOrders);
+            }
+
+            return null;
         }
 
         public async Task<OrderDto> GetOrderById(int id)
         {
-            Order o = await _repository.GetOrderById(id);
+            Order o = await _orderRepository.GetOrderById(id);
             if (o == null)
                 throw new Exception($"Order with ID: {id} doesn't exist.");
             return _mapper.Map<OrderDto>(o);
+        }
+
+        public async Task<List<OrderDto>> GetAllOrders()
+        {
+            List<Order> allOrders = await _orderRepository.GetAllOrders();
+            return _mapper.Map<List<Order>, List<OrderDto>>(allOrders);
         }
     }
 }
