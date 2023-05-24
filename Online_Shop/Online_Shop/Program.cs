@@ -12,7 +12,6 @@ using Online_Shop.Mapping;
 using Online_Shop.Repository;
 using Online_Shop.Service;
 using System.Text;
-using MailKitDemo.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +106,16 @@ builder.Services.AddAuthorization(options =>
               policy.RequireClaim("Verification", "ACCEPTED"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "mycors", builder => {
+        builder.SetIsOriginAllowed(origin => true)
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -117,6 +126,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("mycors");
 
 app.UseAuthentication();
 
