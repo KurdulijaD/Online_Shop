@@ -37,7 +37,7 @@ namespace Online_Shop.Service
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim("UserId", user.Id.ToString()),
-                        new Claim("Email", user.Email),
+                        new Claim("Email", user.Email!),
                         new Claim(ClaimTypes.Role, user.Type.ToString()),
                         new Claim("Verification", user.Verification.ToString())
 
