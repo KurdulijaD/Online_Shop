@@ -10,8 +10,8 @@ const isEmail = (value) => value.includes('@');
 
 const Register = () => {
     const navigate = useNavigate();
-    const [userType, setUserType] = useState('Customer');
-
+    const [Type, setType] = useState('Customer');
+    const [Image, setImage] = useState('');
     const [alert, setAlert] = useState({
         message: '',
         severity: 'success'
@@ -100,7 +100,7 @@ const Register = () => {
 
     const emailBlurHandler = () => {
         const enteredEmail = emailInputRef.current.value;
-        if(!isNotEmpty(enteredEmail) && !isEmail(enteredEmail)) {
+        if(!isNotEmpty(enteredEmail) || !isEmail(enteredEmail)) {
             setIsValid((valid) => ({
                 ...valid,
                 email: true
@@ -122,27 +122,16 @@ const Register = () => {
                 password: true
             }))
         }
-        if(enteredPassword.length >= 8) {
-            setIsValid((valid) => ({
-                ...valid,
-                password: true
-            }))
-        }
         else {
             setIsValid((valid) => ({
                 ...valid,
                 password: false
-            }))
-            setErrorMessages((errors) => ({
-                ...errors,
-                passwordErrorMessage: "Password must contains minimum 8 characters"
             }))
         }
     }
 
     const repeatPasswordBlurHandler = () => {
         const enteredRepeatPassword = repeatPasswordInputRef.current.value;
-        const enteredPassword = passwordInputRef.current.value;
         if(!isNotEmpty(enteredRepeatPassword)) {
             setIsValid((valid) => ({
                 ...valid,
@@ -156,16 +145,7 @@ const Register = () => {
             }))
         }
 
-        if(enteredRepeatPassword !== enteredPassword) {
-            setIsValid((valid) => ({
-                ...valid,
-                repeatPassword: false
-            }))
-            setErrorMessages((errors) => ({
-                ...errors,
-                repeatPasswordErrorMessage: "Passwords don't match!"
-            }))
-        }
+       
     }
 
     const birthdateBlurHandler = () => {
@@ -180,25 +160,6 @@ const Register = () => {
             setIsValid((valid) => ({
                 ...valid,
                 birthdate: false
-            }))
-        }
-
-        const selectedDate = new Date(enteredDate)
-        const currentDate = new Date()
-        const minAgeDate = new Date(
-          currentDate.getFullYear() - 18,
-          currentDate.getMonth(),
-          currentDate.getDate()
-        )
-
-        if (selectedDate < minAgeDate) {
-            setIsValid((errors) => ({
-              ...errors,
-              birthdate: false
-            }))
-            setErrorMessages((errors) => ({
-                ...errors,
-                birthDateErrorMessage: "You must have 18 years!"
             }))
         }
     }
@@ -220,56 +181,91 @@ const Register = () => {
     }
 
     const handleUserTypeChange = (event) => {
-        setUserType(event.target.value);
+        setType(event.target.value);
     };
 
-    const submitHandler = (event) => {
+    const submitHandler = async (event) => {
         event.preventDefault();
-        let selectedDate = new Date(birthdateInputRef.current.value);
-        let selectedImage = imageInputRef.current.files;
-        if (selectedImage && selectedImage.length > 0) {
+        let FirstName = firstNameInputRef.current.value.trim();
+        let LastName = lastNameInputRef.current.value.trim();
+        let Username = usernameInputRef.current.value.trim();
+        let Email = emailInputRef.current.value.trim();
+        let Password = passwordInputRef.current.value.trim();
+        let RepeatPassword = repeatPasswordInputRef.current.value.trim();
+        let Birthdate = new Date(birthdateInputRef.current.value);
+
+        console.log(birthdateInputRef.current.value);
+        let Address = addressInputRef.current.value.trim();
+        
+        let file = imageInputRef.current.files[0];
+        const reader = new FileReader();
+        if (file) {
+            reader.readAsDataURL(file);
+            reader.onloadend = function (e) {
+                setImage(String(reader.result));
+            };
+          }
+        const currentDate = new Date()
+        const minAgeDate = new Date(
+            currentDate.getFullYear() - 18,
+            currentDate.getMonth(),
+            currentDate.getDate()
+          )
+        
+        const formIsValid = Object.values(isValid).every(value => value === true);
+        if(formIsValid) {
+            setAlert({
+                message: 'You must fill in all fields',
+                severity: 'error'
+              })
+              return;
+            // alert("You must fill in all fields");
+            // window.location.reload();
+        }
+        else if(Password !== RepeatPassword)
+        {
+            setAlert({
+                message: 'Password dont match, try again.',
+                severity: 'error'
+              })
+              return;
+            // alert("Password don't match, try again.");
+            // window.location.reload();
+        }
+        else if(Birthdate > minAgeDate) {
+            console.log('usao');
+
+            setAlert({
+                message: 'You must have at least 18 years.',
+                severity: 'error'
+              })
+              return;
+            // alert("You must have at least 18 years.");
+            // window.location.reload();
+        }
+        
+        if (Image && Image.length > 0) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 imageRef.current.src = e.target.result;
               };
         
-              reader.readAsDataURL(selectedImage[0]);
+              reader.readAsDataURL(Image[0]);
         }
 
-        const enteredRepeatPassword = repeatPasswordInputRef.current.value;
-        const enteredPassword = passwordInputRef.current.value;
-        
-        if(isValid) {
-            const registerData = new RegisterModel(
-                firstNameInputRef.current.value.trim(),
-                lastNameInputRef.current.value.trim(),
-                usernameInputRef.current.value.trim(),
-                emailInputRef.current.value.trim(),
-                passwordInputRef.current.value.trim(),
-                repeatPasswordInputRef.current.value.trim(),
-                selectedDate,
-                addressInputRef.current.value.trim(),
-                selectedImage,
-                userType.toUpperCase()
-            )
-
-            register(registerData)
-            .then((response) => {
+        const registerData = new RegisterModel(Username, Email, Password, RepeatPassword, FirstName, LastName, Birthdate, Address, Image, Type);
+        try {
+            const response = await register(registerData);
+                console.log(response);
+                console.log(response.data);
                 setAlert({
-                    message: response.data,
+                    message: 'Success registration',
                     severity: 'success'
-                })
-                if(response.ok) {
-                    navigate('/');
-                    return;
-                }
-            })
-            .catch((error) => {
-                setAlert({
-                    message: error.response.data.Exception,
-                    severity: 'error'
                   })
-            })
+                navigate('/');
+        }
+        catch(error) {
+            throw new Error(error.error);
         }
     };
 
@@ -316,12 +312,12 @@ const Register = () => {
                     </div>
                     <div className={emailClasses}>
                         <label htmlFor="name">Email</label>
-                        <input type="text" id="lastname" ref={emailInputRef} onBlur={emailBlurHandler}/>
+                        <input type="text" id="email" ref={emailInputRef} onBlur={emailBlurHandler}/>
                         {isValid.email && <p className={styles["error-text"]}>{errorMessages.emailErrorMessage}</p>}
                     </div>
                     <div className={passwordClasses}>
                         <label htmlFor="name">Password</label>
-                        <input type="password" id="Password" ref={passwordInputRef} onBlur={passwordBlurHandler}/>
+                        <input type="password" id="password" ref={passwordInputRef} onBlur={passwordBlurHandler}/>
                         {isValid.password && <p className={styles["error-text"]}>{errorMessages.passwordErrorMessage}</p>}
                     </div>
                     <div className={repeatPasswordClasses}>
@@ -341,21 +337,19 @@ const Register = () => {
                     </div>
                     <div>
                         <label htmlFor="name">Image</label>
-                        <input type="file" id="image" ref={imageInputRef}/>
-                        <img ref={imageRef} alt="Preview"/>
+                        <input type="file" id="image" ref={imageInputRef}/><img className={styles['img']} ref={imageRef} alt="Preview"/>
+
                     </div>
                     <div className={styles.radioContainer}>
                         <fieldset>
                             <legend>User type</legend>
-                            <label>Customer<input type="radio" text="Customer" name="userType" value="Customer" checked={userType === 'Customer'} onChange={handleUserTypeChange}/></label>
-                            <label>Salesman <input type="radio" name="userType" value="Salesman" checked={userType === 'Salesman'} onChange={handleUserTypeChange}/></label>
+                            <label>Customer<input type="radio" text="Customer" name="userType" value="Customer" checked={Type === 'Customer'} onChange={handleUserTypeChange}/></label>
+                            <label>Salesman <input type="radio" name="userType" value="Salesman" checked={Type === 'Salesman'} onChange={handleUserTypeChange}/></label>
                         </fieldset>
                     </div>
                 </div>
+                <p className={styles['p']}>Already a member? <Link to='/'>Login</Link></p>            
                 <button className={styles['button']} type="submit">Submit</button>
-                <div>
-                    <p className={styles['p']}>Already a member? <Link to='/'>Login</Link></p>
-                </div>
             </form>
         </div>
   );

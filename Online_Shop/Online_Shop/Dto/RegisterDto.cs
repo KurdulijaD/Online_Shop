@@ -13,6 +13,6 @@ namespace Online_Shop.Dto
         public DateTime BirthDate { get; set; }
         public string Address { get; set; }
         public string Image { get; set; }
-        public EUserType Type { get; set; }
+        public string Type { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
+using Online_Shop.Common;
 using Online_Shop.Dto;
 using Online_Shop.Exceptions;
 using Online_Shop.Interfaces.RepositoryInterfaces;
@@ -86,7 +87,7 @@ namespace Online_Shop.Service
             if (String.IsNullOrEmpty(registerDto.FirstName) || String.IsNullOrEmpty(registerDto.LastName) || String.IsNullOrEmpty(registerDto.Username) ||
                 String.IsNullOrEmpty(registerDto.Email) || String.IsNullOrEmpty(registerDto.Address) ||
                 String.IsNullOrEmpty(registerDto.Password) || String.IsNullOrEmpty(registerDto.RepeatPassword) || String.IsNullOrEmpty(registerDto.Type.ToString()))
-                throw new Exception($"You must fill in all fields for registration!");
+                throw new BadRequestException($"You must fill in all fields for registration!");
 
             if (users.Any(u => u.Username == registerDto.Username))
                 throw new ConflictException("Username already in use. Try again!");
@@ -100,7 +101,8 @@ namespace Online_Shop.Service
             User newUser = _mapper.Map<RegisterDto, User>(registerDto);
             newUser.Image = Encoding.ASCII.GetBytes(registerDto.Image);
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-           
+            newUser.Type = (EUserType)Enum.Parse(typeof(EUserType), registerDto.Type.ToUpper());
+
             if(newUser.Type == Common.EUserType.SALESMAN)
                 newUser.Verification = Common.EVerificationStatus.INPROGRESS;
             else

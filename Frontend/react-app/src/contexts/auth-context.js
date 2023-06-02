@@ -47,9 +47,9 @@ export const AuthContextProvider = (props) => {
         try {
             const response = await login(logInData);
 
-            // if (!response.ok) {
-            //     throw new Error("Invalid email or password!!!");
-            // }
+            if (!response.ok) {
+                throw new Error("Invalid email or password!!!");
+            }
             console.log(response);
 
             const decodedToken = decodeToken(response.data);
