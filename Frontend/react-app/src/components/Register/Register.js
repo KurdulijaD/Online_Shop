@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Register.module.css";
-import RegisterModel from '../../models/UserModels';
+import {RegisterModel} from '../../models/UserModels';
 import {register} from '../../services/UserService';
 import {Alert, AlertTitle} from '@mui/material';
 
 const isNotEmpty = (value) => value.trim() !== '';
 const isEmail = (value) => value.includes('@');
+const exceptionRead = (value) => value.split(':')[1].split('at')[0];
 
 const Register = () => {
     const navigate = useNavigate();
@@ -197,7 +198,8 @@ const Register = () => {
         console.log(birthdateInputRef.current.value);
         let Address = addressInputRef.current.value.trim();
         
-        let file = imageInputRef.current.files[0];
+        let file = imageInputRef.current.files;
+        console.log(file);
         const reader = new FileReader();
         if (file) {
             reader.readAsDataURL(file);
@@ -219,8 +221,6 @@ const Register = () => {
                 severity: 'error'
               })
               return;
-            // alert("You must fill in all fields");
-            // window.location.reload();
         }
         else if(Password !== RepeatPassword)
         {
@@ -229,8 +229,6 @@ const Register = () => {
                 severity: 'error'
               })
               return;
-            // alert("Password don't match, try again.");
-            // window.location.reload();
         }
         else if(Birthdate > minAgeDate) {
             console.log('usao');
@@ -240,8 +238,6 @@ const Register = () => {
                 severity: 'error'
               })
               return;
-            // alert("You must have at least 18 years.");
-            // window.location.reload();
         }
         
         if (Image && Image.length > 0) {
@@ -262,10 +258,14 @@ const Register = () => {
                     message: 'Success registration',
                     severity: 'success'
                   })
-                navigate('/');
+                setTimeout(navigate('/'), 2000);
         }
         catch(error) {
-            throw new Error(error.error);
+            setAlert({
+                message: exceptionRead(error.response.data),
+                severity: 'error'
+              })
+              return;
         }
     };
 
