@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../services/AuthService.js"
 import jwtDecode from 'jwt-decode';
 
+const exceptionRead = (value) => value.split(':')[1].split('at')[0];
 const AuthContext = React.createContext({
     isLoggedIn: false,
-    user: null,
+    token: '',
+    verification: '',
+    role: '',
     onLogout: () => {},
     onLogin: (logInData) => {},
 });
@@ -46,10 +49,10 @@ export const AuthContextProvider = (props) => {
     const logInHandler = async(logInData) => {
         try {
             const response = await login(logInData);
-
-            if (!response.ok) {
-                throw new Error("Invalid email or password!!!");
-            }
+            console.log(response);
+            // if (!response.ok) {
+            //     throw new Error("Invalid email or password!!!");
+            // }
             console.log(response);
 
             const decodedToken = decodeToken(response.data);
@@ -58,13 +61,17 @@ export const AuthContextProvider = (props) => {
             let role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
             setIsLoggedIn(true);
+            setToken(response.data);
+            setRole(role);
+            setVerification(verification);
+
             sessionStorage.setItem('isLoggedIn', '1');
-            sessionStorage.setItem('token', response);
+            sessionStorage.setItem('token', response.data);
             sessionStorage.setItem('verification', verification); 
             sessionStorage.setItem('role', role);    
-            navigate("/home");  
+            navigate("/dashboard");  
         } catch (error){
-            alert(error.message);
+            alert(exceptionRead(error.response.data));
         }
     };
 
@@ -74,7 +81,7 @@ export const AuthContextProvider = (props) => {
             sessionStorage.removeItem('token');    
             sessionStorage.removeItem('verification');
             sessionStorage.removeItem('role');    
-            navigate("/login");       
+            navigate("/");       
     };
 
     return (

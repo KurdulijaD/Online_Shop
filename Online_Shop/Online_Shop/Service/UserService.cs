@@ -90,7 +90,7 @@ namespace Online_Shop.Service
                 throw new BadRequestException($"You must fill in all fields for registration!");
 
             if (users.Any(u => u.Username == registerDto.Username))
-                throw new ConflictException("Username already in use. Try again!");
+                throw (Exception)new ConflictException("Username already in use. Try again!").ToActionResult();
 
             if (users.Any(u => u.Email == registerDto.Email))
                 throw new ConflictException("Email already in use. Try again!");
@@ -137,18 +137,6 @@ namespace Online_Shop.Service
             {
                 if (String.IsNullOrEmpty(profileDto.OldPassword))
                     throw new BadRequestException("You must enter old password!");
-
-                if (!BCrypt.Net.BCrypt.Verify(profileDto.OldPassword, user.Password))
-                    throw new BadRequestException("Old password is incorrect!");
-
-                user.Password = BCrypt.Net.BCrypt.HashPassword(profileDto.Password);
-
-            }
-
-            if (!String.IsNullOrEmpty(profileDto.OldPassword))
-            {
-                if (String.IsNullOrEmpty(profileDto.Password))
-                    throw new BadRequestException("You must enter new password!");
 
                 if (!BCrypt.Net.BCrypt.Verify(profileDto.OldPassword, user.Password))
                     throw new BadRequestException("Old password is incorrect!");

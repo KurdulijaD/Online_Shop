@@ -1,30 +1,32 @@
 import React, { useContext} from "react";
-import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AuthContext from "../contexts/auth-context.js";
 import Login  from "../components/Login/Login.js"
 import Register from "../components/Register/Register.js";
+import Dashboard from "../components/Dashboard/Dashboard.js";
+import Profile from "../components/Profile/Profile.js";
 
 const AppRoutes = () => {
     const authCtx = useContext(AuthContext);
-
     const isLoggedIn = authCtx.isLoggedIn;
-    const role = authCtx.role;
-    const verification = authCtx.verification;
-
-    const isAdmin = role === 'ADMINISTRATOR';
-    const isCustomer = role === 'CUSTOMER';
-    const isSalesman = role === 'SALESMAN';
-    const isVerified = verification === 'ACCEPTED';
 
     return (
         <Routes>
           <Route
             path="/"
-            element={isLoggedIn ? <Navigate to="/home" /> : <Login />}
+            element={isLoggedIn ? <Dashboard /> : <Login />}
           />
           <Route
             path="/register"
-            element={isLoggedIn ? <Navigate to="/home" /> : <Register />}
+            element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />}
+          />
+          <Route
+            path="/dashboard"
+            element={isLoggedIn ? <Dashboard /> : <Login />}
+          />
+          <Route
+            path="/profile"
+            element={isLoggedIn ? <Profile /> : <Login />}
           />
         </Routes>
     );

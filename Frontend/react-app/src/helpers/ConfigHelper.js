@@ -1,4 +1,3 @@
-import { GetToken } from "./TokenHelper";
 import axios from "axios";
 
 const api = axios.create({ 
@@ -11,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => { 
     try{ 
-        const token = GetToken(); 
+        const token = sessionStorage.getItem('token');
         if(token){ 
             return {...config, headers: { 
                 ...config.headers, 

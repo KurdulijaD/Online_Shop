@@ -11,5 +11,17 @@ export class RegisterModel  {
                 this.Image = Image;
                 this.Type = Type;
            }
-        }
-export default RegisterModel;
+}
+
+export class ProfileModel  {
+     constructor(Username, Email, Password, FirstName, LastName, Birthdate, Address, Image) {
+          this.Username = Username;
+          this.Email = Email;    
+          this.Password = Password;
+          this.FirstName = FirstName;
+          this.LastName = LastName;          
+          this.Birthdate = Birthdate;
+          this.Address = Address;
+          this.Image = Image;
+     }
+  }
