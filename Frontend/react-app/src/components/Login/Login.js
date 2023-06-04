@@ -2,7 +2,6 @@ import React, {useRef, useState, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../contexts/auth-context";
 import styles from "./Login.module.css";
-import { login } from "../../services/AuthService"
 import LoginModel from "../../models/AuthModels";
 import {Alert, AlertTitle} from '@mui/material';
 
