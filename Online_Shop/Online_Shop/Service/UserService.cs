@@ -41,7 +41,7 @@ namespace Online_Shop.Service
             return _mapper.Map<User, UserDto>(u);
         }
 
-        public async Task<UserDto> DenieVerification(int id)
+        public async Task<UserDto> DenyVerification(int id)
         {
             User u = await _repository.GetById(id);
             if (u == null)
@@ -49,7 +49,7 @@ namespace Online_Shop.Service
             if (u.Verification != Common.EVerificationStatus.INPROGRESS)
                 throw new BadRequestException($"Cant change verification anymore!");
 
-            u = await _repository.DenieVerification(id);
+            u = await _repository.DenyVerification(id);
             if (u != null)
             {
                 _emailService.SendEmail(u.Email, u.Verification.ToString());
@@ -65,12 +65,12 @@ namespace Online_Shop.Service
             return _mapper.Map<List<User>, List<UserDto>>(users);
         }
 
-        public async Task<List<UserDto>> GetAllSalesmans()
+        public async Task<List<UserVerificationDto>> GetAllSalesmans()
         {
             List<User> users = await _repository.GetAllSalesmans();
             if (users == null)
                 throw new NotFoundException($"There are no users!");
-            return _mapper.Map<List<User>, List<UserDto>>(users);
+            return _mapper.Map<List<User>, List<UserVerificationDto>>(users);
         }
 
         public async Task<UserDto> GetById(int id)
