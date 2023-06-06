@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ProfileModel } from "../../models/UserModels";
 import { getMyProfile, update } from "../../services/UserService";
 import { Alert, AlertTitle, Button, Box, TextField } from "@mui/material";
 import styles from "./Profile.module.css";
@@ -11,8 +9,6 @@ const isEmail = (value) => value.includes("@");
 const exceptionRead = (value) => value.split(":")[1].split("at")[0];
 
 const Profile = () => {
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     Username: "",
     Email: "",

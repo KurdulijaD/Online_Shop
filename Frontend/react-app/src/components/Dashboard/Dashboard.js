@@ -23,9 +23,16 @@ const Dashboard = () => {
   const isSalesman = role === "SALESMAN";
   const isVerified = verification === "ACCEPTED";
 
-  const profileHandler = async(event) => {
-        navigate('/profile');
-  }
+  const profileHandler = async (event) => {
+    navigate("/profile");
+  };
+  const verificationHandler = async (event) => {
+    navigate("/verification");
+  };
+
+  const ordersHandler = async () => {
+    navigate("/orders");
+  };
 
   return (
     <>
@@ -81,11 +88,9 @@ const Dashboard = () => {
               }
               size="large"
               color="primary"
-              onClick={() => {
-                console.log("Kliknuli ste na Lista!");
-              }}
+              onClick={verificationHandler}
             >
-              Salesmans
+              Verification
             </Button>
           </Box>
           <Box sx={{ m: 2 }}>
@@ -106,9 +111,7 @@ const Dashboard = () => {
               }
               size="large"
               color="primary"
-              onClick={() => {
-                console.log("Kliknuli ste na Porudžbina!");
-              }}
+              onClick={ordersHandler}
             >
               Orders
             </Button>
@@ -202,7 +205,7 @@ const Dashboard = () => {
         </Box>
       )}
 
-      {isSalesman &&
+      {isSalesman && (
         <Box
           sx={{
             display: "flex",
@@ -315,7 +318,7 @@ const Dashboard = () => {
             </>
           )}
         </Box>
-      }
+      )}
     </>
   );
 };

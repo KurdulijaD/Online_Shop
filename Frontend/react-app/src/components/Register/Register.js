@@ -200,13 +200,13 @@ const Register = () => {
         
         let file = imageInputRef.current.files;
         console.log(file);
-        const reader = new FileReader();
-        if (file) {
-            reader.readAsDataURL(file);
-            reader.onloadend = function (e) {
-                setImage(String(reader.result));
-            };
-          }
+        // const reader = new FileReader();
+        // if (file) {
+        //     reader.readAsDataURL(file);
+        //     reader.onloadend = function (e) {
+        //         setImage(String(reader.result));
+        //     };
+        //   }
         const currentDate = new Date()
         const minAgeDate = new Date(
             currentDate.getFullYear() - 18,
@@ -240,14 +240,14 @@ const Register = () => {
               return;
         }
         
-        if (Image && Image.length > 0) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                imageRef.current.src = e.target.result;
-              };
+        // if (Image && Image.length > 0) {
+        //     const reader = new FileReader();
+        //     reader.onload = (e) => {
+        //         imageRef.current.src = e.target.result;
+        //       };
         
-              reader.readAsDataURL(Image[0]);
-        }
+        //       reader.readAsDataURL(Image[0]);
+        // }
 
         const registerData = new RegisterModel(Username, Email, Password, RepeatPassword, FirstName, LastName, Birthdate, Address, Image, Type);
         try {
