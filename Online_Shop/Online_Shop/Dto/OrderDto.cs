@@ -12,7 +12,7 @@ namespace Online_Shop.Dto
         public double Price { get; set; }
         public DateTime OrderTime { get; set; }
         public DateTime DeliveryTime { get; set; }
-        public EOrderStatus Status { get; set; }
+        public string Status { get; set; }
         public List<OrderProductDto>? OrderProducts { get; set; }
         public int UserId { get; set; }
         public int DeliveryPrice { get; set; }

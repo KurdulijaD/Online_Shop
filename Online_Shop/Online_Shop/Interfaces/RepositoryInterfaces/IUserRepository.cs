@@ -10,6 +10,6 @@ namespace Online_Shop.Interfaces.RepositoryInterfaces
         Task<User> UpdateProfile(User newUser);
         Task<User> Register(User user);
         Task<User> AcceptVerification(int id);
-        Task<User> DenieVerification(int id);
+        Task<User> DenyVerification(int id);
     }
 }

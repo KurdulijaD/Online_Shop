@@ -7,10 +7,10 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
     {
         Task<UserDto> GetById(int id);
         Task<List<UserDto>> GetAll();
-        Task<List<UserDto>> GetAllSalesmans();
+        Task<List<UserVerificationDto>> GetAllSalesmans();
         Task<UserDto> UpdateProfile(int id, UpdateProfileDto profileDto);
         Task<UserDto> Register(RegisterDto registerDto);
         Task<UserDto> AcceptVerification(int id);
-        Task<UserDto> DenieVerification(int id);
+        Task<UserDto> DenyVerification(int id);
     }
 }

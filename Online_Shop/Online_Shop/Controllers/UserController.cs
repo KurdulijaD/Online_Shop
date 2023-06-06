@@ -45,7 +45,7 @@ namespace Online_Shop.Controllers
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> GetAllSalesmans()
         {
-            List<UserDto> salesmans = await _service.GetAllSalesmans();
+            List<UserVerificationDto> salesmans = await _service.GetAllSalesmans();
             if (salesmans == null)
                 return BadRequest();
             return Ok(salesmans);
@@ -72,7 +72,7 @@ namespace Online_Shop.Controllers
             return Ok(user);
         }
 
-        [HttpPut("AcceptVerification/id")]
+        [HttpPut("AcceptVerification/{id}")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> AcceptVerification(int id)
         {
@@ -82,11 +82,11 @@ namespace Online_Shop.Controllers
             return Ok(user);
         }
 
-        [HttpPut("DenieVerification/id")]
+        [HttpPut("DenyVerification/{id}")]
         [Authorize(Roles = "ADMINISTRATOR")]
-        public async Task<IActionResult> DenieVerification(int id)
+        public async Task<IActionResult> DenyVerification(int id)
         {
-            UserDto user = await _service.DenieVerification(id);
+            UserDto user = await _service.DenyVerification(id);
             if (user == null)
                 return BadRequest();
             return Ok(user);

@@ -32,7 +32,7 @@ namespace Online_Shop.Repository
             }
         }
 
-        public async Task<User> DenieVerification(int id)
+        public async Task<User> DenyVerification(int id)
         {
             try
             {
