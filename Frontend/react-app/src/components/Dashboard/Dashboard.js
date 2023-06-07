@@ -34,6 +34,10 @@ const Dashboard = () => {
     navigate("/orders");
   };
 
+  const productHandler = async () => {
+    navigate("/product");
+  };
+
   return (
     <>
       <NavBar />
@@ -258,9 +262,7 @@ const Dashboard = () => {
                   }
                   size="large"
                   color="primary"
-                  onClick={() => {
-                    console.log("Kliknuli ste na Lista!");
-                  }}
+                  onClick={productHandler}
                 >
                   New product
                 </Button>

@@ -1,29 +1,38 @@
-import React, {useState, useEffect, useContext} from 'react';
-import AuthContext from '../../contexts/auth-context';
-import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {getAllOrders} from '../../services/OrderService'
-import { Alert, AlertTitle, colors } from '@mui/material';
-import NavBar from '../NavBar/NavBar';
+import React, { useState, useEffect, useContext } from "react";
+import AuthContext from "../../contexts/auth-context";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Collapse,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Paper,
+  Alert,
+  AlertTitle
+} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import {
+  getAllOrders,
+  getCustomerDeliveredOrders,
+  getCustomerInProgressOrders,
+  getSalesmanDeliveredOrders,
+  getSalesmanInProgressOrders,
+} from "../../services/OrderService";
+import NavBar from "../NavBar/NavBar";
 
 function Row({ row }) {
   const [open, setOpen] = useState(false);
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -36,11 +45,11 @@ function Row({ row }) {
         <TableCell component="th" scope="row">
           {row.id}
         </TableCell>
-        <TableCell align='center'>{row.comment}</TableCell>
-        <TableCell align='center'>{row.address}</TableCell>
+        <TableCell align="center">{row.comment}</TableCell>
+        <TableCell align="center">{row.address}</TableCell>
         <TableCell align="center">{row.price}</TableCell>
-        <TableCell align="center">{row.orderTime.split('.')[0]}</TableCell>
-        <TableCell align="center">{row.deliveryTime.split('.')[0]}</TableCell>
+        <TableCell align="center">{row.orderTime.split(".")[0]}</TableCell>
+        <TableCell align="center">{row.deliveryTime.split(".")[0]}</TableCell>
         <TableCell align="center">{row.status}</TableCell>
       </TableRow>
       <TableRow>
@@ -53,21 +62,31 @@ function Row({ row }) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align='center'>Name</TableCell>
-                    <TableCell align='center'>Description</TableCell>
-                    <TableCell align='center'>Price</TableCell>
-                    <TableCell align='center'>Amount</TableCell>
+                    <TableCell align="center">Name</TableCell>
+                    <TableCell align="center">Description</TableCell>
+                    <TableCell align="center">Price</TableCell>
+                    <TableCell align="center">Amount</TableCell>
                     <TableCell align="right">Total price (RSD)</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.orderProducts.map((orderProduct) => (
                     <TableRow key={orderProduct.id}>
-                      <TableCell align='center'>{orderProduct.product.name}</TableCell>
-                      <TableCell align='center'>{orderProduct.product.description}</TableCell>
-                      <TableCell align='center'>{orderProduct.product.price}</TableCell>
-                      <TableCell align='center'>{orderProduct.amount}</TableCell>
-                      <TableCell align='right'>{orderProduct.amount * orderProduct.product.price}</TableCell>
+                      <TableCell align="center">
+                        {orderProduct.product.name}
+                      </TableCell>
+                      <TableCell align="center">
+                        {orderProduct.product.description}
+                      </TableCell>
+                      <TableCell align="center">
+                        {orderProduct.product.price}
+                      </TableCell>
+                      <TableCell align="center">
+                        {orderProduct.amount}
+                      </TableCell>
+                      <TableCell align="right">
+                        {orderProduct.amount * orderProduct.product.price}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -109,48 +128,86 @@ Row.propTypes = {
 };
 
 const Orders = () => {
-    const exceptionRead = (value) => value.split(":")[1].split("at")[0];
-    const [data, setData] = useState([]);
-    const [alert, setAlert] = useState({
-        message: "",
-        severity: "success",
-      });
+  const exceptionRead = (value) => value.split(":")[1].split("at")[0];
+  const [data, setData] = useState([]);
+  const [alert, setAlert] = useState({
+    message: "",
+    severity: "success",
+  });
 
-    const authCtx = useContext(AuthContext);  
-    const role = authCtx.role;
-    const verification = authCtx.verification;
-  
-    const isAdmin = role === "ADMINISTRATOR";
-    const isCustomer = role === "CUSTOMER";
-    const isSalesman = role === "SALESMAN";
-    const isVerified = verification === "ACCEPTED";
+  const authCtx = useContext(AuthContext);
+  const role = authCtx.role;
 
-        useEffect(() => {
-            const fetchData = async () => {
-                if(isAdmin) {
-                    try {
-                        const response = await getAllOrders();
-                        console.log("ovaj ispis", response.data);
-                        setData(response.data);
-                      } catch (error) {
-                        setAlert({
-                          message: exceptionRead(error.response.data),
-                          severity: "error",
-                        });
-                        return;
-                      }
-                    };
-                }
-              
-        
-            fetchData();
-          }, []);
-    
+  const isAdmin = role === "ADMINISTRATOR";
+  const isCustomer = role === "CUSTOMER";
+  const isSalesman = role === "SALESMAN";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isAdmin) {
+        try {
+          const response = await getAllOrders();
+          console.log("ovaj ispis", response.data);
+          setData(response.data);
+        } catch (error) {
+          setAlert({
+            message: exceptionRead(error.response.data),
+            severity: "error",
+          });
+          return;
+        }
+      }
+      if (isSalesman) {
+        try {
+          const responseInProgress = await getSalesmanInProgressOrders();
+          console.log("ovaj ispis", responseInProgress.data);
+          setData(responseInProgress.data);
+          const responseDelivered = await getSalesmanDeliveredOrders();
+          setData((prevData) => ({
+            ...prevData,
+            ...responseDelivered.data,
+          }));
+        } catch (error) {
+          setAlert({
+            message: exceptionRead(error.response.data),
+            severity: "error",
+          });
+          return;
+        }
+      }
+
+      if (isCustomer) {
+        try {
+          const responseInProgress = await getCustomerInProgressOrders();
+          console.log("ovaj ispis", responseInProgress.data);
+          setData(responseInProgress.data);
+          const responseDelivered = await getCustomerDeliveredOrders();
+          setData((prevData) => ({
+            ...prevData,
+            ...responseDelivered.data,
+          }));
+        } catch (error) {
+          setAlert({
+            message: exceptionRead(error.response.data),
+            severity: "error",
+          });
+          return;
+        }
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
-          {alert.message !== "" && (
+      {alert.message !== "" && (
         <Alert
-          // className={styles.alert_register}
+        sx={{  
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          width: 'auto'}}
           onClose={() => setAlert({ message: "", severity: "success" })}
         >
           <AlertTitle>
@@ -160,39 +217,46 @@ const Orders = () => {
         </Alert>
       )}
       <NavBar />
-    <Box
-    sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#243b55",
-      }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "#243b55",
+        }}
       >
-    <div style={{ position: 'fixed', top: 65, width: '100%', backgroundColor: 'blue' }}>
-    <TableContainer component={Paper} style={{background: '#243b55'}}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Id</TableCell>
-            <TableCell align='center'>Comment</TableCell>
-            <TableCell align='center'>Address</TableCell>
-            <TableCell align="center">Price</TableCell>
-            <TableCell align="center">Order Time</TableCell>
-            <TableCell align="center">Delivery Time</TableCell>
-            <TableCell align="center">Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <Row key={row.id} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </div>
-    </Box>
+        <div
+          style={{
+            position: "fixed",
+            top: 65,
+            width: "100%",
+            backgroundColor: "blue",
+          }}
+        >
+          <TableContainer component={Paper} style={{ background: "#243b55" }}>
+            <Table aria-label="collapsible table">
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>Id</TableCell>
+                  <TableCell align="center">Comment</TableCell>
+                  <TableCell align="center">Address</TableCell>
+                  <TableCell align="center">Price</TableCell>
+                  <TableCell align="center">Order Time</TableCell>
+                  <TableCell align="center">Delivery Time</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((row) => (
+                  <Row key={row.id} row={row} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </Box>
     </>
   );
 };
