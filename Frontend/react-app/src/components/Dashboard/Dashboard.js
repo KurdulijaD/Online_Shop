@@ -239,7 +239,7 @@ const Dashboard = () => {
               color="primary"
               onClick={profileHandler}
             >
-              My Profile
+              Profile
             </Button>
           </Box>
           {isVerified && (
@@ -264,7 +264,7 @@ const Dashboard = () => {
                   color="primary"
                   onClick={productHandler}
                 >
-                  New product
+                  Products
                 </Button>
               </Box>
               <Box sx={{ m: 2, backgroundColor: "#243b55" }}>
@@ -289,32 +289,7 @@ const Dashboard = () => {
                     console.log("Kliknuli ste na Porudžbina!");
                   }}
                 >
-                  My Orders
-                </Button>
-              </Box>
-              <Box sx={{ m: 2, backgroundColor: "#243b55" }}>
-                <Button
-                  sx={{
-                    color: "#141e30",
-                    fontSize: "30px",
-                    padding: "20px 30px",
-                    "&:hover": {
-                      backgroundColor: "#03e9f4",
-                    },
-                  }}
-                  variant="contained"
-                  startIcon={
-                    <FormatListBulleted
-                      sx={{ fontSize: "40px", width: "40px", height: "40px" }}
-                    />
-                  }
-                  size="large"
-                  color="primary"
-                  onClick={() => {
-                    console.log("Kliknuli ste na Porudžbina!");
-                  }}
-                >
-                  New Orders
+                  Orders
                 </Button>
               </Box>
             </>

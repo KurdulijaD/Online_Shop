@@ -39,14 +39,19 @@ namespace Online_Shop.Service
             if (salesman == null)
                 throw new NotFoundException($"Salesman with ID: {id} doesn't exist.");
 
-            Product newProduct = _mapper.Map<CreateProductDto, Product>(productDto);
-            newProduct.Image = Encoding.ASCII.GetBytes(productDto.Image);
+            Product newProduct = _mapper.Map<Product>(productDto);
+            using(var memoryStream = new MemoryStream())
+            {
+                productDto.Image.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+                newProduct.Image = imageBytes;
+            }
+
             newProduct.Deleted = false;
             newProduct.User = salesman;
             newProduct.UserId = id;
 
-            ProductDto dto = _mapper.Map<Product, ProductDto>(await _productRepository.CreateProduct(newProduct));
-            dto.Image = Encoding.Default.GetString(newProduct.Image);
+            ProductDto dto = _mapper.Map<Product, ProductDto>(await _productRepository.CreateProduct(newProduct));         
             return dto;
         }
 
@@ -68,7 +73,7 @@ namespace Online_Shop.Service
         public async Task<List<ProductDto>> GetMyProducts(int id)
         {
             List<Product> products = await _productRepository.GetAllProducts();
-            products = products.Where(p => p.UserId == id).ToList();
+            products = products.Where(p => p.UserId == id && p.Deleted == false).ToList();
             if (products == null)
                 throw new NotFoundException($"There are no products!");
             List<ProductDto> lista = _mapper.Map<List<Product>, List<ProductDto>>(products);
@@ -100,10 +105,14 @@ namespace Online_Shop.Service
                 throw new BadRequestException($"Invalid field values!");
 
             _mapper.Map(productDto, p);
-            p.Image = Encoding.ASCII.GetBytes(productDto.Image);
+            using (var memoryStream = new MemoryStream())
+            {
+                productDto.Image.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+                p.Image = imageBytes;
+            }
 
             ProductDto dto = _mapper.Map<Product, ProductDto>(await _productRepository.UpdateProduct(p));
-            dto.Image = Encoding.Default.GetString(p.Image);
             return dto;
         }
     }

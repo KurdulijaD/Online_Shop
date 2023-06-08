@@ -7,22 +7,22 @@ import {
   Box,
   Typography,
   Alert,
-  AlertTitle
+  AlertTitle,
 } from "@mui/material";
 import ImageForm from "../../ImageForm/ImageForm";
 import { createNewProduct } from "../../../services/ProductService";
 
 const NewProduct = ({ open, onClose }) => {
-    const exceptionRead = (value) => value.split(":")[1].split("at")[0];
-    const [alert, setAlert] = useState({
-      message: "",
-      severity: "success",
-    });
+  const exceptionRead = (value) => value.split(":")[1].split("at")[0];
+  const [alert, setAlert] = useState({
+    message: "",
+    severity: "success",
+  });
   const [data, setData] = useState({
     Name: "",
-    Price: 0,
-    Amount: 0,
     Description: "",
+    Amount: 0,
+    Price: 0,
     Image: "",
   });
 
@@ -58,50 +58,63 @@ const NewProduct = ({ open, onClose }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = new FormData();
+    formData.append("Name", data.Name);
+    formData.append("Description", data.Description);
+    formData.append("Amount", data.Amount);
+    formData.append("Price", data.Price);
+    formData.append("Image", data.Image);
 
-    const addProduct = async() => {
-        try {
-            const response = await createNewProduct(data);
-        } catch (error) {
-            setAlert({
-                message: "exceptionRead(error.response.data)",
-                severity: "error",
-              });
-              return;
-        }
-    }
+    console.log(formData);
+
+    const addProduct = async () => {
+      try {
+        const response = await createNewProduct(formData).then(() => {onClose();});
+      } catch (error) {
+        setAlert({
+          message: error.response.data,
+          severity: "error",
+        });
+        return;
+      }
+    };
     addProduct();
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-        <>
-              <Typography component="h1" variant="h5">
-            Create product
-          </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit}
-        >
-    
+      <>
+        <Typography component="h1" variant="h5">
+          Create product
+        </Typography>
+        <Box component="form" noValidate onSubmit={handleSubmit}>
           <Box
             noValidate
             sx={{
-                backgroundColor: "#243b55",
-                display: 'flex',
-                marginLeft: '40%',
-                width: 350,
-                height: 550,
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
+              backgroundColor: "#243b55",
+              display: "flex",
+              marginLeft: "40%",
+              width: 350,
+              height: 550,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "center",
             }}
           >
-            <Grid display="flex"
-                            flexDirection="column"
-                            sx={{ justifyContent: 'flex-end', alignItems: 'center', mt: -2, marginTop: "10%" }}>
-              <Grid >
+            <Grid
+              display="flex"
+              flexDirection="column"
+              sx={{
+                justifyContent: "flex-end",
+                alignItems: "center",
+                mt: -2,
+                marginTop: "10%",
+              }}
+            >
+              <Grid>
                 <TextField
-                      inputProps={{ style: { color: 'white' } }}
-                      InputLabelProps={{ style: { color: 'white' } }}
+                  inputProps={{ style: { color: "white" } }}
+                  InputLabelProps={{ style: { color: "white" } }}
                   autoComplete="name"
                   name="name"
                   required
@@ -114,8 +127,8 @@ const NewProduct = ({ open, onClose }) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                      inputProps={{ style: { color: 'white' } }}
-                      InputLabelProps={{ style: { color: 'white' } }}
+                  inputProps={{ style: { color: "white" } }}
+                  InputLabelProps={{ style: { color: "white" } }}
                   required
                   fullWidth
                   id="description"
@@ -129,8 +142,8 @@ const NewProduct = ({ open, onClose }) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                      inputProps={{ style: { color: 'white' } }}
-                      InputLabelProps={{ style: { color: 'white' } }}
+                  inputProps={{ style: { color: "white" } }}
+                  InputLabelProps={{ style: { color: "white" } }}
                   required
                   fullWidth
                   name="amount"
@@ -143,8 +156,8 @@ const NewProduct = ({ open, onClose }) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                      inputProps={{ style: { color: 'white' } }}
-                      InputLabelProps={{ style: { color: 'white' } }}
+                  inputProps={{ style: { color: "white" } }}
+                  InputLabelProps={{ style: { color: "white" } }}
                   required
                   fullWidth
                   name="price"
@@ -204,7 +217,7 @@ const NewProduct = ({ open, onClose }) => {
             </Box>
           </Box>
         </Box>
-        </>
+      </>
     </Modal>
   );
 };

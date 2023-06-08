@@ -46,7 +46,7 @@ namespace Online_Shop.Controllers
         //POST api/product
         [HttpPost]
         [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
-        public async Task<IActionResult> Post([FromBody] CreateProductDto productDto)
+        public async Task<IActionResult> Post([FromForm] CreateProductDto productDto)
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
             ProductDto product = await _service.CreateProduct(id, productDto);

@@ -19,6 +19,26 @@ namespace Online_Shop.Mapping
             CreateMap<Product, UpdateProductDto>().ReverseMap();
             CreateMap<OrderProduct, OrderProductDto>().ReverseMap();
             CreateMap<OrderProduct, CreateOrderProductDto>().ReverseMap();
+            CreateMap<IFormFile, byte[]>().ConvertUsing((file, _, context) => ConvertIFormFileToByteArray(file, context));
+            CreateMap<byte[], IFormFile>().ConvertUsing((byteArray, _, context) => ConvertByteArrayToIFormFile(byteArray, context));
+
+        }
+
+        public byte[] ConvertIFormFileToByteArray(IFormFile file, ResolutionContext context)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
+        }
+
+        public IFormFile ConvertByteArrayToIFormFile(byte[] byteArray, ResolutionContext context)
+        {
+            var memoryStream = new MemoryStream(byteArray);
+            var formFile = new FormFile(memoryStream, 0, byteArray.Length, null, "file");
+
+            return formFile;
         }
     }
 }

@@ -112,7 +112,12 @@ const Verification = () => {
     <>
       {alert.message !== "" && (
         <Alert
-          // className={styles.alert_register}
+        sx={{  
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          width: 'auto'}}
           onClose={() => setAlert({ message: "", severity: "success" })}
         >
           <AlertTitle>
