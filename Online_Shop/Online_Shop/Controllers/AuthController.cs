@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Shop.Dto;
 using Online_Shop.Interfaces.ServiceInterfaces;
+using Online_Shop.Service;
 
 namespace Online_Shop.Controllers
 {
@@ -25,6 +26,14 @@ namespace Online_Shop.Controllers
             string token = await _service.Login(loginDto);
             if (token == null)
                 return BadRequest();
+            return Ok(token);
+        }
+
+        [HttpPost("GoogleLogin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleLogin([FromForm] string googleToken)
+        {
+            string token = await _service.GoogleLogin(googleToken);
             return Ok(token);
         }
     }
