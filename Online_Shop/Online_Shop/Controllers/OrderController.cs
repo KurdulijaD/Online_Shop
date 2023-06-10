@@ -18,8 +18,8 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPost("CreateOrder")]
-        [Authorize(Roles = "CUSTOMER", Policy = "VerifiedUserOnly")]
-        public async Task<IActionResult> CreateOrder([FromBody]CreateOrderDto orderDto)
+        [Authorize(Roles = "CUSTOMER")]
+        public async Task<IActionResult> CreateOrder(CreateOrderDto orderDto)
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
             OrderDto order = await _service.CreateOrder(id, orderDto);

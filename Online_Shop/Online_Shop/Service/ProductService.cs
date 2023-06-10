@@ -67,7 +67,10 @@ namespace Online_Shop.Service
 
         public async Task<List<ProductDto>> GetAll()
         {
-            return _mapper.Map<List<Product>, List<ProductDto>>(await _productRepository.GetAllProducts());
+            List<Product> products = await _productRepository.GetAllProducts();
+            products = products.Where(p => p.Deleted == false).ToList();
+
+            return _mapper.Map<List<Product>, List<ProductDto>>(products);
         }
 
         public async Task<List<ProductDto>> GetMyProducts(int id)

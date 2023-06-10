@@ -32,6 +32,17 @@ namespace Online_Shop.Controllers
             return Ok(products);
         }
 
+        //GET api/product
+        [HttpGet("GetAllProducts")]
+        [Authorize(Roles = "CUSTOMER")]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            List<ProductDto> products = await _service.GetAll();
+            if (products == null)
+                return BadRequest();
+            return Ok(products);
+        }
+
         //GET api/product/id
         [HttpGet("{id}")]
         [Authorize(Roles = "SALESMAN")]
