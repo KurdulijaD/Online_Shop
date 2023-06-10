@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../services/AuthService.js"
+import { login, googleLogin } from "../services/AuthService.js"
 import jwtDecode from 'jwt-decode';
 
 const exceptionRead = (value) => value.split(':')[1].split('at')[0];
@@ -11,6 +11,7 @@ const AuthContext = React.createContext({
     role: '',
     onLogout: () => {},
     onLogin: (logInData) => {},
+    googleLogin: (loginData) => {}
 });
 
 const decodeToken = (token) => {
@@ -75,6 +76,36 @@ export const AuthContextProvider = (props) => {
         }
     };
 
+    const googleLoginHandler = async (logInData) => {
+        try {
+            const response = await googleLogin(logInData);
+            console.log(response);
+            // if (!response.ok) {
+            //     throw new Error("Invalid email or password!!!");
+            // }
+            console.log(response);
+
+            const decodedToken = decodeToken(response.data);
+            console.log('decoded token: ', decodeToken);
+            let verification = decodedToken.Verification;
+            let role = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+
+            setIsLoggedIn(true);
+            setToken(response.data);
+            setRole(role);
+            setVerification(verification);
+
+            sessionStorage.setItem('isLoggedIn', '1');
+            sessionStorage.setItem('token', response.data);
+            sessionStorage.setItem('verification', verification); 
+            sessionStorage.setItem('role', role);    
+            navigate("/dashboard");  
+        } catch (error){
+            console.log(error);
+            alert(error.response.data);
+        }
+    }
+
     const logOutHandler = async() => {
             setIsLoggedIn(false);
             sessionStorage.removeItem('isLoggedIn');
@@ -92,7 +123,8 @@ export const AuthContextProvider = (props) => {
             verification: verification,
             role: role,
             onLogout: logOutHandler,
-            onLogin: logInHandler
+            onLogin: logInHandler,
+            googleLogin: googleLoginHandler
         }}>
             {props.children}       
         </AuthContext.Provider>
