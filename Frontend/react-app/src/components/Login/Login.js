@@ -2,8 +2,9 @@ import React, {useRef, useState, useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../contexts/auth-context";
 import styles from "./Login.module.css";
-import LoginModel from "../../models/AuthModels";
 import {Alert, AlertTitle} from '@mui/material';
+import { GoogleLogin } from '@react-oauth/google';
+import { toast } from 'react-toastify';
 
 const isEmpty = (value) => value.trim().length === 0;
 
@@ -44,6 +45,21 @@ const Login = () => {
         }
     }
 
+    const googleLoginHandler = (response) => {
+        let data = new FormData();
+        data.append("googleToken", response.credential);
+        authCtx.googleLogin(data);
+      };
+    
+      const googleLoginErrorHandler = () => {
+        toast.error("Google login error", {
+          position: "top-center",
+          autoClose: 2500,
+          closeOnClick: true,
+          pauseOnHover: false,
+        });
+      };
+
     return (
         <div className={styles['body']}>
                     {alert.message !== '' && (
@@ -72,6 +88,10 @@ const Login = () => {
                 </form>
                 <div>
                     <p className={styles['p']}>Not a member? <Link to='/register'>Register</Link></p>
+                    <GoogleLogin
+                onSuccess={googleLoginHandler}
+                onError={googleLoginErrorHandler}
+              />
                 </div>
             </div>
         </div>

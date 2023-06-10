@@ -38,6 +38,10 @@ const Dashboard = () => {
     navigate("/product");
   };
 
+  const shopHandler = async () => {
+    navigate("/shop");
+  };
+
   return (
     <>
       <NavBar />
@@ -174,9 +178,7 @@ const Dashboard = () => {
               }
               size="large"
               color="primary"
-              onClick={() => {
-                console.log("Kliknuli ste na Lista!");
-              }}
+              onClick={ordersHandler}
             >
               Orders
             </Button>
@@ -199,11 +201,9 @@ const Dashboard = () => {
               }
               size="large"
               color="primary"
-              onClick={() => {
-                console.log("Kliknuli ste na Porudžbina!");
-              }}
+              onClick={shopHandler}
             >
-              New Order
+              Shop
             </Button>
           </Box>
         </Box>
@@ -285,9 +285,7 @@ const Dashboard = () => {
                   }
                   size="large"
                   color="primary"
-                  onClick={() => {
-                    console.log("Kliknuli ste na Porudžbina!");
-                  }}
+                  onClick={ordersHandler}
                 >
                   Orders
                 </Button>

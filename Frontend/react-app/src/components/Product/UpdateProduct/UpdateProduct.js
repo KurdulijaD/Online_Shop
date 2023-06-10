@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   Modal,
   Button,
@@ -6,17 +6,14 @@ import {
   Grid,
   Box,
   Typography,
-  Alert,
-  AlertTitle,
 } from "@mui/material";
 import ImageForm from "../../ImageForm/ImageForm";
 import {
-  getProductById,
   updateProduct,
 } from "../../../services/ProductService";
 
-const NewProduct = ({ open, onClose, product }) => {
-  console.log('ovaj ispis', onClose);
+const UpdateProduct = ({ open, onClose, product }) => {
+  console.log("ovaj ispis", product);
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const [alert, setAlert] = useState({
     message: "",
@@ -89,25 +86,8 @@ const NewProduct = ({ open, onClose, product }) => {
   };
 
   return (
-    <Modal open={open} onClose={onClose} product={product}>
-      {alert.message !== "" && (
-        <Alert
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            width: "auto",
-          }}
-          onClose={() => setAlert({ message: "", severity: "success" })}
-        >
-          <AlertTitle>
-            {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-          </AlertTitle>
-          {alert.message}
-        </Alert>
-      )}
-      <>
+    <>
+      <Modal open={open} onClose={onClose}>
         <Typography component="h1" variant="h5">
           Create product
         </Typography>
@@ -245,9 +225,9 @@ const NewProduct = ({ open, onClose, product }) => {
             </Box>
           </Box>
         </Box>
-      </>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
-export default NewProduct;
+export default UpdateProduct;

@@ -42,9 +42,7 @@ function Row({ row }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
-          {row.id}
-        </TableCell>
+        <TableCell component="th" scope="row">{row.id}</TableCell>
         <TableCell align="center">{row.comment}</TableCell>
         <TableCell align="center">{row.address}</TableCell>
         <TableCell align="center">{row.price}</TableCell>
@@ -157,7 +155,7 @@ const Orders = () => {
           return;
         }
       }
-      if (isSalesman) {
+      else if (isSalesman) {
         try {
           const responseInProgress = await getSalesmanInProgressOrders();
           console.log("ovaj ispis", responseInProgress.data);
@@ -175,8 +173,7 @@ const Orders = () => {
           return;
         }
       }
-
-      if (isCustomer) {
+      else if (isCustomer) {
         try {
           const responseInProgress = await getCustomerInProgressOrders();
           console.log("ovaj ispis", responseInProgress.data);
@@ -249,7 +246,7 @@ const Orders = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((row) => (
+                {data.length>0 && data.map((row) => (
                   <Row key={row.id} row={row} />
                 ))}
               </TableBody>

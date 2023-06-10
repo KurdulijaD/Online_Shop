@@ -3,17 +3,10 @@ import NewProduct from "./NewProduct/NewProduct";
 import {
   Alert,
   AlertTitle,
-  Typography,
-  Grid,
   Box,
-  Paper,
   Button,
   Avatar,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
+
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import NavBar from "../NavBar/NavBar";
@@ -71,6 +64,7 @@ const Product = () => {
     const fetchData = async () => {
       try {
         const response = await getProductById(id);
+        console.log(response);
         setSelectedProduct(response.data);
         console.log(response.data);
       } catch (error) {
