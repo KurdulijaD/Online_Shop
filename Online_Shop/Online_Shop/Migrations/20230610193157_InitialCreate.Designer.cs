@@ -12,7 +12,7 @@ using Online_Shop.Data;
 namespace Online_Shop.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230522160032_InitialCreate")]
+    [Migration("20230610193157_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -53,8 +53,9 @@ namespace Online_Shop.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

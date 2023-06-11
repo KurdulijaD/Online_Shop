@@ -44,7 +44,7 @@ namespace Online_Shop.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeliveryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     DeliveryPrice = table.Column<int>(type: "int", nullable: false)
                 },
