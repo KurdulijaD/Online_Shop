@@ -99,7 +99,12 @@ namespace Online_Shop.Service
                 throw new BadRequestException("Passwords do not match. Try again!");
 
             User newUser = _mapper.Map<RegisterDto, User>(registerDto);
-            newUser.Image = Encoding.ASCII.GetBytes(registerDto.Image);
+            using (var memoryStream = new MemoryStream())
+            {
+                registerDto.ImageForm.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+                newUser.Image = imageBytes;
+            }
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
             newUser.Type = (EUserType)Enum.Parse(typeof(EUserType), registerDto.Type.ToUpper());
 
@@ -109,7 +114,6 @@ namespace Online_Shop.Service
                 newUser.Verification = Common.EVerificationStatus.ACCEPTED;
 
             UserDto dto = _mapper.Map<User, UserDto>(await _repository.Register(newUser));
-            dto.Image = Encoding.Default.GetString(newUser.Image);
             return dto;
         }
 
@@ -149,11 +153,14 @@ namespace Online_Shop.Service
                 profileDto.Password = user.Password;
 
             _mapper.Map(profileDto, user);
-            //user = _mapper.Map<User>(profileDto);
-            user.Image = Encoding.ASCII.GetBytes(profileDto.Image);
+            using (var memoryStream = new MemoryStream())
+            {
+                profileDto.ImageForm.CopyTo(memoryStream);
+                var imageBytes = memoryStream.ToArray();
+                user.Image = imageBytes;
+            }
 
             UserDto dto = _mapper.Map<User, UserDto>(await _repository.UpdateProfile(user));
-            dto.Image = Encoding.Default.GetString(user.Image);
             return dto;
         }
     }

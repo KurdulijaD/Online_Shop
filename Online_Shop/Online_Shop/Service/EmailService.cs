@@ -16,10 +16,11 @@ namespace Online_Shop.Service
         }
         public async Task SendEmail(string email, string verification)
         {
+            string text = $"Your verification request for Online Shop is {verification}";
             var mail = new MimeMessage
             {
                 Subject = "Verification",
-                Body = new TextPart(MimeKit.Text.TextFormat.Plain) { Text = verification }
+                Body = new TextPart(MimeKit.Text.TextFormat.Plain) { Text = text }
             };
 
 

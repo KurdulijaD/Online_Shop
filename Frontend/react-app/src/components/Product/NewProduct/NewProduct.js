@@ -23,7 +23,7 @@ const NewProduct = ({ open, onClose }) => {
     Description: "",
     Amount: 0,
     Price: 0,
-    Image: "",
+    ImageForm: "",
   });
 
   const [displayImage, setDisplayImage] = useState(null);
@@ -52,7 +52,7 @@ const NewProduct = ({ open, onClose }) => {
     }
     setData({
       ...data,
-      Image: file,
+      ImageForm: file,
     });
   };
 
@@ -63,7 +63,7 @@ const NewProduct = ({ open, onClose }) => {
     formData.append("Description", data.Description);
     formData.append("Amount", data.Amount);
     formData.append("Price", data.Price);
-    formData.append("Image", data.Image);
+    formData.append("ImageForm", data.ImageForm);
 
     console.log(formData);
 

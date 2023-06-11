@@ -12,7 +12,7 @@ namespace Online_Shop.Dto
         public string LastName { get; set; }
         public DateTime BirthDate { get; set; }
         public string Address { get; set; }
-        public string Image { get; set; }
+        public IFormFile ImageForm { get; set; }
         public string Type { get; set; }
     }
 }

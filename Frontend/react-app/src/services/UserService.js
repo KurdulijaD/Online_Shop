@@ -1,7 +1,7 @@
 import api from "../helpers/ConfigHelper";
 
 export const getMyProfile = async () => {
-  return await api.get(`/user/GetMyProfile`);
+  return await api.get(`/user/get-my-profile`);
 };
 
 export const register = async (registerData) => {
@@ -13,13 +13,13 @@ export const update = async (updateData) => {
 };
 
 export const acceptVerification = async (id) => {
-  return await api.put(`/user/AcceptVerification/`+ id);
+  return await api.put(`/user/accept-verification/`+ id);
 };
 
 export const denyVerification = async (id) => {
-  return await api.put(`/user/DenyVerification/` + id);
+  return await api.put(`/user/deny-verification/` + id);
 };
 
 export const getAllSalesmans = async () => {
-  return await api.get(`/user/GetAllSalesmans`);
+  return await api.get(`/user/get-all-salesmans`);
 };

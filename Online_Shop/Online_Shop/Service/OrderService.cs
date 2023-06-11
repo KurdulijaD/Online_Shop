@@ -55,7 +55,7 @@ namespace Online_Shop.Service
             return dto;
         }
 
-        public async Task<bool> DenieOrder(int id)
+        public async Task<bool> DenyOrder(int id)
         {
             Order o = await _orderRepository.GetOrderById(id);
             if (o == null)

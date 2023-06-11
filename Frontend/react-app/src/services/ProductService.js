@@ -1,11 +1,11 @@
 import api from "../helpers/ConfigHelper";
 
 export const getAllProducts = async () => {
-  return await api.get(`/product/GetAllProducts`)
+  return await api.get(`/product/get-all-products`)
 }
 
 export const getMyProducts = async () => {
-  return await api.get(`/product/GetMyProducts`);
+  return await api.get(`/product/get-my-products`);
 };
 
 export const getProductById = async (id) => {

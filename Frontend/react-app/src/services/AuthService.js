@@ -5,5 +5,5 @@ export const login = async (logInData) => {
 };
 
 export const googleLogin = async (logInData) => {
-  return await api.post(`/auth/GoogleLogin`, logInData, {headers: {"Content-Type":"multipart/form-data"}});
+  return await api.post(`/auth/google-login`, logInData, {headers: {"Content-Type":"multipart/form-data"}});
 };

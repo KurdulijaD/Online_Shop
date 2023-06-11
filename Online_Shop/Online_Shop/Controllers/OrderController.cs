@@ -17,7 +17,7 @@ namespace Online_Shop.Controllers
             _service = service;
         }
 
-        [HttpPost("CreateOrder")]
+        [HttpPost("create-order")]
         [Authorize(Roles = "CUSTOMER")]
         public async Task<IActionResult> CreateOrder(CreateOrderDto orderDto)
         {
@@ -29,7 +29,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("GetAllOrders")]
+        [HttpGet("get-all-orders")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -40,7 +40,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("GetCustomerDeliveredOrders")]
+        [HttpGet("get-customer-delivered-orders")]
         [Authorize(Roles = "CUSTOMER")]
         public async Task<IActionResult> GetCustomerDeliveredOrders()
         {
@@ -52,7 +52,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("GetSalesmanDeliveredOrders")]
+        [HttpGet("get-salesman-delivered-orders")]
         [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
         public async Task<IActionResult> GetSalesmanDeliveredOrders()
         {
@@ -64,7 +64,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("GetCustomerInProgressOrders")]
+        [HttpGet("get-customer-in-progress-orders")]
         [Authorize(Roles = "CUSTOMER")]
         public async Task<IActionResult> GetCustomerInProgressOrders()
         {
@@ -76,7 +76,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("GetSalesmanInProgressOrders")]
+        [HttpGet("get-salesman-in-progress-orders")]
         [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
         public async Task<IActionResult> GetSalesmanInProgressOrders()
         {
@@ -88,11 +88,11 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/order
-        [HttpGet("DenieOrder")]
+        [HttpPut("deny-order/{id}")]
         [Authorize(Roles = "CUSTOMER")]
-        public async Task<IActionResult> DenieOrder(int id)
+        public async Task<IActionResult> DenyOrder(int id)
         {
-            bool temp = await _service.DenieOrder(id);
+            bool temp = await _service.DenyOrder(id);
             if (!temp)
                 return BadRequest();
             return Ok();

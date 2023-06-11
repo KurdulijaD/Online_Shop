@@ -10,6 +10,6 @@ namespace Online_Shop.Interfaces.ServiceInterfaces
         Task<List<OrderDto>> GetAllInProgressOrders(int id);
         Task<OrderDto> GetOrderById(int id);
         Task<OrderDto> CreateOrder(int userId, CreateOrderDto orderDto);
-        Task<bool> DenieOrder(int id);
+        Task<bool> DenyOrder(int id);
     }
 }

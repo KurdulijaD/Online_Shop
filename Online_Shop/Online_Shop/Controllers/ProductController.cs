@@ -21,7 +21,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/product
-        [HttpGet("GetMyProducts")]
+        [HttpGet("get-my-products")]
         [Authorize(Roles = "SALESMAN", Policy = "VerifiedUserOnly")]
         public async Task<IActionResult> GetMyProducts()
         {
@@ -33,7 +33,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/product
-        [HttpGet("GetAllProducts")]
+        [HttpGet("get-all-products")]
         [Authorize(Roles = "CUSTOMER")]
         public async Task<IActionResult> GetAllProducts()
         {

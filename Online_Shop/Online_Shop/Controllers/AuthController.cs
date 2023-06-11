@@ -29,7 +29,7 @@ namespace Online_Shop.Controllers
             return Ok(token);
         }
 
-        [HttpPost("GoogleLogin")]
+        [HttpPost("google-login")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLogin([FromForm] string googleToken)
         {

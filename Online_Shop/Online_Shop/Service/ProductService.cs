@@ -42,7 +42,7 @@ namespace Online_Shop.Service
             Product newProduct = _mapper.Map<Product>(productDto);
             using(var memoryStream = new MemoryStream())
             {
-                productDto.Image.CopyTo(memoryStream);
+                productDto.ImageForm.CopyTo(memoryStream);
                 var imageBytes = memoryStream.ToArray();
                 newProduct.Image = imageBytes;
             }
@@ -110,7 +110,7 @@ namespace Online_Shop.Service
             _mapper.Map(productDto, p);
             using (var memoryStream = new MemoryStream())
             {
-                productDto.Image.CopyTo(memoryStream);
+                productDto.ImageForm.CopyTo(memoryStream);
                 var imageBytes = memoryStream.ToArray();
                 p.Image = imageBytes;
             }

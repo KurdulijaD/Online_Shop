@@ -19,7 +19,7 @@ namespace Online_Shop.Controllers
         }
 
         //GET api/user/GetAllUsers
-        [HttpGet("GetAllUsers")]
+        [HttpGet("get-all-users")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -31,7 +31,7 @@ namespace Online_Shop.Controllers
 
         //GET api/user
         [Authorize]
-        [HttpGet("GetMyProfile")]
+        [HttpGet("get-my-profile")]
         public async Task<IActionResult> GetMyProfile()
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
@@ -41,7 +41,7 @@ namespace Online_Shop.Controllers
             return Ok(user);
         }
 
-        [HttpGet("GetAllSalesmans")]
+        [HttpGet("get-all-salesmans")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> GetAllSalesmans()
         {
@@ -72,7 +72,7 @@ namespace Online_Shop.Controllers
             return Ok(user);
         }
 
-        [HttpPut("AcceptVerification/{id}")]
+        [HttpPut("accept-verification/{id}")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> AcceptVerification(int id)
         {
@@ -82,7 +82,7 @@ namespace Online_Shop.Controllers
             return Ok(user);
         }
 
-        [HttpPut("DenyVerification/{id}")]
+        [HttpPut("deny-verification/{id}")]
         [Authorize(Roles = "ADMINISTRATOR")]
         public async Task<IActionResult> DenyVerification(int id)
         {
