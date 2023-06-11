@@ -1,101 +1,184 @@
-import React, {useRef, useState, useContext} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useRef, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthContext from "../../contexts/auth-context";
-import styles from "./Login.module.css";
-import {Alert, AlertTitle} from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
-import { toast } from 'react-toastify';
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { GoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 
-const isEmpty = (value) => value.trim().length === 0;
+const isNotEmpty = (value) => value.trim() !== "";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const defaultTheme = createTheme();
 
-    const [isEmailValid, setIsEmailValid] = useState(false);
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
-    const [alert, setAlert] = useState({
-        message: '',
-        severity: 'success'
-      })
+  const [data, setData] = useState({
+    Email: "",
+    Password: "",
+  });
+  const [isValid, setIsValid] = useState({
+    email: true,
+    password: true,
+  });
 
-    const authCtx = useContext(AuthContext);
-    const emailInputRef = useRef();
-    const passwordInputRef = useRef();
+  const authCtx = useContext(AuthContext);
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
 
-    const submitHandler = (event) => {
-        event.preventDefault();
-        const enteredEmail = emailInputRef.current.value;
-        const enteredPassword = passwordInputRef.current.value;
-
-        setIsEmailValid(false);
-        setIsPasswordValid(false);
-        
-        if(!isEmpty(enteredEmail) && !isEmpty(enteredPassword))
-        {
-            setIsEmailValid(true);
-            setIsPasswordValid(true);
-        }
-        
-        if(isEmailValid && isPasswordValid) {
-            const loginData = {email : enteredEmail, password: enteredPassword}
-            authCtx.onLogin(loginData).then((response) => {
-                console.log(response);
-            })
-            console.log(loginData);
-        }
+  const emailBlurHandler = () => {
+    const enteredEmail = data.Email;
+    if (isNotEmpty(enteredEmail) && emailRegex.test(enteredEmail)) {
+      setIsValid((valid) => ({
+        ...valid,
+        email: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        email: false,
+      }));
     }
+  };
 
-    const googleLoginHandler = (response) => {
-        let data = new FormData();
-        data.append("googleToken", response.credential);
-        authCtx.googleLogin(data);
-      };
-    
-      const googleLoginErrorHandler = () => {
-        toast.error("Google login error", {
-          position: "top-center",
-          autoClose: 2500,
-          closeOnClick: true,
-          pauseOnHover: false,
-        });
-      };
+  const passwordBlurHandler = () => {
+    const enteredPassword = data.Password;
+    if (isNotEmpty(enteredPassword)) {
+      setIsValid((valid) => ({
+        ...valid,
+        password: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        password: false,
+      }));
+    }
+  };
 
-    return (
-        <div className={styles['body']}>
-                    {alert.message !== '' && (
-        <Alert
-          className={styles.alert_register}
-          onClose={() => setAlert({ message: '', severity: 'success' })}
-        >
-          <AlertTitle>
-            {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-          </AlertTitle>
-          {alert.message}
-        </Alert>
-      )}
-            <div className={styles["login-box"]}>
-                <h2>Login</h2>
-                <form onSubmit={submitHandler}>
-                    <div className={styles["user-box"]}>
-                        <input  ref={emailInputRef} id="email" type="text" name="email" required />
-                        <label>Email</label>
-                    </div>
-                    <div className={styles["user-box"]}>
-                        <input  ref={passwordInputRef} id="password" type="password" name="password" required />
-                        <label>Password</label>
-                    </div>
-                    <button className={styles['button']} type="submit">Submit</button>
-                </form>
-                <div>
-                    <p className={styles['p']}>Not a member? <Link to='/register'>Register</Link></p>
-                    <GoogleLogin
-                onSuccess={googleLoginHandler}
-                onError={googleLoginErrorHandler}
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    const loginData = { email: data.Email, password: data.Password };
+    authCtx.onLogin(loginData).then((response) => {
+      console.log(response);
+    });
+  };
+
+  const googleLoginHandler = (response) => {
+    let data = new FormData();
+    data.append("googleToken", response.credential);
+    authCtx.googleLogin(data);
+  };
+
+  const googleLoginErrorHandler = () => {
+    toast.error("Google login error", {
+      position: "top-center",
+      autoClose: 2500,
+      closeOnClick: true,
+      pauseOnHover: false,
+    });
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#243b55",
+      }}
+    >
+      <ThemeProvider theme={defaultTheme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5" sx={{ color: "white" }}>
+              Login
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={submitHandler}
+              noValidate
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "white" } }}
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                error={!isValid.email}
+                onBlur={emailBlurHandler}
+                onChange={(e) => setData({ ...data, Email: e.target.value })}
               />
-                </div>
-            </div>
-        </div>
-    );
-}
+              <TextField
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "white" } }}
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                error={!isValid.password}
+                onBlur={passwordBlurHandler}
+                onChange={(e) => setData({ ...data, Password: e.target.value })}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Login
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link href="/register" variant="body2">
+                    {"Don't have an account? Register"}
+                  </Link>
+                  <GoogleLogin
+                    onSuccess={googleLoginHandler}
+                    onError={googleLoginErrorHandler}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    </Box>
+  );
+};
 
 export default Login;

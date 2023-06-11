@@ -5,7 +5,7 @@ export const getMyProfile = async () => {
 };
 
 export const register = async (registerData) => {
-  return await api.post(`/user`, registerData);
+  return await api.post(`/user`, registerData, {headers: {"Content-Type":"multipart/form-data"}});
 };
 
 export const update = async (updateData) => {

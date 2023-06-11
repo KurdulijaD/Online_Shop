@@ -90,7 +90,7 @@ namespace Online_Shop.Service
                 throw new BadRequestException($"You must fill in all fields for registration!");
 
             if (users.Any(u => u.Username == registerDto.Username))
-                throw (Exception)new ConflictException("Username already in use. Try again!").ToActionResult();
+                throw new ConflictException("Username already in use. Try again!");
 
             if (users.Any(u => u.Email == registerDto.Email))
                 throw new ConflictException("Email already in use. Try again!");

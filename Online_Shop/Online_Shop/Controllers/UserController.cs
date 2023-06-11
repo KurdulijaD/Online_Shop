@@ -52,8 +52,9 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         [AllowAnonymous]
-        public async Task<IActionResult> Post([FromBody]RegisterDto registerDto)
+        public async Task<IActionResult> Post([FromForm]RegisterDto registerDto)
         {
             UserDto user = await _service.Register(registerDto);
             if (user == null)
