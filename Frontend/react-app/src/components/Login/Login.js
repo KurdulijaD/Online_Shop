@@ -163,14 +163,15 @@ const Login = () => {
                 Login
               </Button>
               <Grid container>
-                <Grid item>
-                  <Link href="/register" variant="body2">
-                    {"Don't have an account? Register"}
-                  </Link>
+                <Grid item sx={{ marginLeft: 10 }}>
                   <GoogleLogin
+                    sx={{ mt: 3, mb: 2 }}
                     onSuccess={googleLoginHandler}
                     onError={googleLoginErrorHandler}
                   />
+                  <Link href="/register" variant="body2">
+                    {"Don't have an account? Register"}
+                  </Link>
                 </Grid>
               </Grid>
             </Box>
