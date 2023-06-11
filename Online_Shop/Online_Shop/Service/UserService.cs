@@ -36,7 +36,7 @@ namespace Online_Shop.Service
             u = await _repository.AcceptVerification(id);
             if(u != null)
             {
-                _emailService.SendEmail(u.Email, u.Verification.ToString());
+                await _emailService.SendEmail(u.Email, u.Verification.ToString());
             }
             return _mapper.Map<User, UserDto>(u);
         }
