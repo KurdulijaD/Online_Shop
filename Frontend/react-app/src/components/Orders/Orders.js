@@ -12,7 +12,8 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Paper
+  Paper,
+  Button
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -24,9 +25,19 @@ import {
   getSalesmanInProgressOrders,
 } from "../../services/OrderService";
 import NavBar from "../NavBar/NavBar";
+import { denyOrder } from "../../services/OrderService";
 
-function Row({ row }) {
+function Row({ row, onDenyOrder  }) {
   const [open, setOpen] = useState(false);
+  const authCtx = useContext(AuthContext);
+  const role = authCtx.role;
+  const exceptionRead = (value) => value.split(":")[1].split("at")[0];
+
+  const isCustomer = role === "CUSTOMER";
+
+  const handleDenyOrder = () => {
+    onDenyOrder(row.id);
+  };
 
   return (
     <React.Fragment>
@@ -49,6 +60,12 @@ function Row({ row }) {
         <TableCell align="center" sx={{ color: "white" }}>{row.orderTime.split(".")[0]}</TableCell>
         <TableCell align="center" sx={{ color: "white" }}>{row.deliveryTime.split(".")[0]}</TableCell>
         <TableCell align="center" sx={{ color: "white" }}>{row.status}</TableCell>
+        {isCustomer && row.status === 'INPROGRESS' &&
+        <TableCell align="center" sx={{ color: "white" }}><Button sx={{ ml: 2, mt: 1 }}
+        onClick={handleDenyOrder}
+        variant="contained"
+        color="secondary">Deny</Button></TableCell>
+        }
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
@@ -139,13 +156,24 @@ const Orders = () => {
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const [data, setData] = useState([]);
   const [delivered, setDelivered] = useState([]);
-
+  const [change, setChange] = useState(false);
   const authCtx = useContext(AuthContext);
   const role = authCtx.role;
 
   const isAdmin = role === "ADMINISTRATOR";
   const isCustomer = role === "CUSTOMER";
   const isSalesman = role === "SALESMAN";
+
+  const handleDenyOrder = async (orderId) => {
+    try {
+      // Implement your logic to deny the order
+      const response = await denyOrder(orderId);
+      setChange(!change);
+      alert("You deny order succesfully!");
+    } catch (error) {
+      if (error) alert(exceptionRead(error.response.data));
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -200,7 +228,7 @@ const Orders = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [change]);
 
   return (
     <>
@@ -246,11 +274,17 @@ const Orders = () => {
                   <TableCell align="center" sx={{ color: "white" }}>
                     Status
                   </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data.length > 0 &&
-                  data.map((row) => <Row key={row.id} row={row} />)}
+                  data.map((row) => <Row
+                  key={row.id}
+                  row={row}
+                  onDenyOrder={handleDenyOrder}
+                />)}
                   {delivered.length > 0 &&
                   delivered.map((row) => <Row key={row.id} row={row} />)}
               </TableBody>

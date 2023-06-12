@@ -22,5 +22,5 @@ export const createOrder = async (orderData) => {
 };
 
 export const denyOrder = async (id) => {
-  return await api.put(`/order/deny-order`, id);
+  return await api.put(`/order/deny-order/`+id);
 };
