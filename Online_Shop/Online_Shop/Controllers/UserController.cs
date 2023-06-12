@@ -63,8 +63,9 @@ namespace Online_Shop.Controllers
         }
 
         [HttpPut]
+        [Consumes("multipart/form-data")]
         [Authorize]
-        public async Task<IActionResult> Put(UpdateProfileDto profileDto)
+        public async Task<IActionResult> Put([FromForm] UpdateProfileDto profileDto)
         {
             int id = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
             UserDto user = await _service.UpdateProfile(id, profileDto);

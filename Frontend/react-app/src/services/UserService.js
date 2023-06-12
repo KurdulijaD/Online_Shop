@@ -9,7 +9,7 @@ export const register = async (registerData) => {
 };
 
 export const update = async (updateData) => {
-  return await api.put(`/user`, updateData);
+  return await api.put(`/user`, updateData, {headers: {"Content-Type":"multipart/form-data"}});
 };
 
 export const acceptVerification = async (id) => {

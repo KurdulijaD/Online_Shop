@@ -99,11 +99,14 @@ namespace Online_Shop.Service
                 throw new BadRequestException("Passwords do not match. Try again!");
 
             User newUser = _mapper.Map<RegisterDto, User>(registerDto);
-            using (var memoryStream = new MemoryStream())
+            if(registerDto.ImageForm != null)
             {
-                registerDto.ImageForm.CopyTo(memoryStream);
-                var imageBytes = memoryStream.ToArray();
-                newUser.Image = imageBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    registerDto.ImageForm.CopyTo(memoryStream);
+                    var imageBytes = memoryStream.ToArray();
+                    newUser.Image = imageBytes;
+                }
             }
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
             newUser.Type = (EUserType)Enum.Parse(typeof(EUserType), registerDto.Type.ToUpper());
@@ -137,27 +140,36 @@ namespace Online_Shop.Service
                 if (users.Any(u => u.Email == profileDto.Email))
                     throw new ConflictException("Email already in use. Try again!");
 
-            if (!String.IsNullOrEmpty(profileDto.Password))
+            if (!String.IsNullOrEmpty(profileDto.PasswordUpdate))
             {
-                if (String.IsNullOrEmpty(profileDto.OldPassword))
+                if (String.IsNullOrEmpty(profileDto.OldPasswordUpdate))
                     throw new BadRequestException("You must enter old password!");
 
-                if (!BCrypt.Net.BCrypt.Verify(profileDto.OldPassword, user.Password))
+                if (!BCrypt.Net.BCrypt.Verify(profileDto.OldPasswordUpdate, user.Password.TrimEnd()))
                     throw new BadRequestException("Old password is incorrect!");
 
-                user.Password = BCrypt.Net.BCrypt.HashPassword(profileDto.Password);
+                user.Password = BCrypt.Net.BCrypt.HashPassword(profileDto.PasswordUpdate);
 
             }
 
-            if (String.IsNullOrEmpty(profileDto.Password) && String.IsNullOrEmpty(profileDto.OldPassword))
-                profileDto.Password = user.Password;
+            if (!String.IsNullOrEmpty(profileDto.OldPasswordUpdate))
+            {
+                if (String.IsNullOrEmpty(profileDto.PasswordUpdate))
+                    throw new BadRequestException("You must enter new password!");
+            }
+
+            if (String.IsNullOrEmpty(profileDto.PasswordUpdate) && String.IsNullOrEmpty(profileDto.OldPasswordUpdate))
+                profileDto.PasswordUpdate = user.Password;
 
             _mapper.Map(profileDto, user);
-            using (var memoryStream = new MemoryStream())
+            if(profileDto.ImageForm != null)
             {
-                profileDto.ImageForm.CopyTo(memoryStream);
-                var imageBytes = memoryStream.ToArray();
-                user.Image = imageBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    profileDto.ImageForm.CopyTo(memoryStream);
+                    var imageBytes = memoryStream.ToArray();
+                    user.Image = imageBytes;
+                }
             }
 
             UserDto dto = _mapper.Map<User, UserDto>(await _repository.UpdateProfile(user));

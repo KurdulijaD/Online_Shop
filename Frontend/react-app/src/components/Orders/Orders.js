@@ -246,7 +246,7 @@ const Orders = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.length>0 && data.map((row) => (
+                {data.length > 0 && data.map((row) => (
                   <Row key={row.id} row={row} />
                 ))}
               </TableBody>

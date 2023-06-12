@@ -1,31 +1,49 @@
-import { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import ImageForm from "../ImageForm/ImageForm";
 import { getMyProfile, update } from "../../services/UserService";
-import { Alert, AlertTitle, Button, Box, TextField } from "@mui/material";
-import styles from "./Profile.module.css";
 import NavBar from "../NavBar/NavBar";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
-const isEmpty = (value) => value.trim() === "";
-const isEmail = (value) => value.includes("@");
+const isNotEmpty = (value) => value.trim() !== "";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const exceptionRead = (value) => value.split(":")[1].split("at")[0];
+const byteArrayToFile = (byteArray) => {
+  const blob = new Blob([byteArray], { type: "image/jpeg" });
+  const file = new File([blob], 'slika.jpg', { type: "image/jpeg" });
+  return file;
+};
+const defaultTheme = createTheme();
 
 const Profile = () => {
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const [displayImage, setDisplayImage] = useState(null);
+  const [userImage, setUserImage] = useState('');
+  const imageInput = useRef(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [localDate, setLocalDate] = useState(null);
+  const [data, setData] = useState({
     Username: "",
     Email: "",
-    Password: "",
     OldPassword: "",
+    Password: "",
     FirstName: "",
     LastName: "",
     BirthDate: "",
     Address: "",
-    Image: "",
-  });
-
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const [alert, setAlert] = useState({
-    message: "",
-    severity: "success",
+    ImageForm: "",
   });
 
   const [isValid, setIsValid] = useState({
@@ -33,33 +51,77 @@ const Profile = () => {
     username: true,
     password: true,
     oldPassword: true,
-    firstName: true,
-    lastName: true,
+    firstname: true,
+    lastname: true,
     birthdate: true,
     address: true,
   });
+
+  const imageUploadHandler = () => {
+    if (!imageInput.current) {
+      return;
+    }
+    imageInput.current.children[0].click();
+  };
+
+  const imageChangeHandler = (event) => {
+    if (!event.target.files) {
+      return;
+    }
+    const file = event.target.files[0];
+    console.log(file);
+    const reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setDisplayImage(reader.result.toString());
+      };
+    }
+    setData({
+      ...data,
+      ImageForm: file,
+    });
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+  useEffect(() => {
+    if (selectedDate) {
+      const localDateTime = new Date(selectedDate).toLocaleDateString();
+      setLocalDate(localDateTime);
+    }
+  }, [selectedDate, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getMyProfile();
-        console.log("ovaj ispis", response.data);
-        setFormData({
-          ...formData,
+        console.log("OVO", response.data.birthDate);
+        let initialDateString = response.data.birthDate;
+        let initialDatePart = initialDateString.split('T');
+        let initialDateParts = initialDatePart[0].split('-');
+        console.log(initialDateParts);
+        let initialDate = new Date(initialDatePart[0])
+        //let initialDate = new Date(initialDateParts[0], initialDateParts[1], initialDateParts[2]);
+        setSelectedDate(initialDate);
+        const imageSrc = `data:image/*;base64,` + response.data.image;
+        setUserImage(imageSrc);
+        setData({
+          ...data,
           FirstName: response.data.firstName,
           LastName: response.data.lastName,
           Username: response.data.username,
           Email: response.data.email,
-          BirthDate: response.data.birthDate.split("T")[0],
+          BirthDate: initialDate,
           Address: response.data.address,
         });
-        setSelectedImage(response.data.image);
-        console.log(selectedImage);
+        console.log(response.data);
+        console.log(response.data.image);
+        console.log(data.ImageForm);
+
       } catch (error) {
-        setAlert({
-          message: "",
-          severity: "error",
-        });
+        if (error.response) alert(exceptionRead(error.response.data));
         return;
       }
     };
@@ -67,110 +129,183 @@ const Profile = () => {
     fetchData();
   }, []);
 
+  const firstnameBlurHandler = () => {
+    const enteredFirstName = data.FirstName;
+    if (isNotEmpty(enteredFirstName)) {
+      setIsValid((valid) => ({
+        ...valid,
+        firstname: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        firstname: false,
+      }));
+    }
+  };
+
+  const lastnameBlurHandler = () => {
+    const enteredlastName = data.LastName;
+    if (isNotEmpty(enteredlastName)) {
+      setIsValid((valid) => ({
+        ...valid,
+        lastname: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        lastname: false,
+      }));
+    }
+  };
+
+  const usernameBlurHandler = () => {
+    const enteredUsername = data.Username;
+    if (isNotEmpty(enteredUsername)) {
+      setIsValid((valid) => ({
+        ...valid,
+        username: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        username: false,
+      }));
+    }
+  };
+
+  const emailBlurHandler = () => {
+    const enteredEmail = data.Email;
+    if (isNotEmpty(enteredEmail) && emailRegex.test(enteredEmail)) {
+      setIsValid((valid) => ({
+        ...valid,
+        email: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        email: false,
+      }));
+    }
+  };
+
+  const birthdateBlurHandler = () => {
+    const enteredDate = data.BirthDate;
+    if (isNotEmpty(enteredDate)) {
+      setIsValid((valid) => ({
+        ...valid,
+        birthdate: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        birthdate: false,
+      }));
+    }
+  };
+
+  const addressBlurHandler = () => {
+    const enteredAddress = data.Address;
+    if (isNotEmpty(enteredAddress)) {
+      setIsValid((valid) => ({
+        ...valid,
+        address: true,
+      }));
+    } else {
+      setIsValid((valid) => ({
+        ...valid,
+        address: false,
+      }));
+    }
+  };
+
   const submitHandler = async (event) => {
     event.preventDefault();
 
-    if (isEmpty(formData.FirstName))
-      setIsValid({
-        ...isValid,
-        firstName: false,
-      });
-    else
+    if (isNotEmpty(data.FirstName))
       setIsValid({
         ...isValid,
         firstName: true,
       });
-    if (isEmpty(formData.LastName))
+    else
       setIsValid({
         ...isValid,
-        lastName: false,
+        firstName: false,
       });
-    else
+    if (isNotEmpty(data.LastName))
       setIsValid({
         ...isValid,
         lastName: true,
       });
-    if (isEmpty(formData.Address)) {
+    else
       setIsValid({
         ...isValid,
-        address: false,
+        lastName: false,
       });
-      console.log(isValid.address);
-    } else
+    if (isNotEmpty(data.Address)) {
       setIsValid({
         ...isValid,
         address: true,
       });
-    if (isEmpty(formData.Username))
+    } else
       setIsValid({
         ...isValid,
-        username: false,
+        address: false,
       });
-    else
+    if (isNotEmpty(data.Username))
       setIsValid({
         ...isValid,
         username: true,
       });
-    if (isEmpty(formData.Email) && !isEmail(formData.Email))
+    else
       setIsValid({
         ...isValid,
-        email: false,
+        username: false,
       });
-    else
+    if (isNotEmpty(data.Email) && emailRegex.test(data.Email))
       setIsValid({
         ...isValid,
         email: true,
       });
-    if (isEmpty(formData.BirthDate))
-      setIsValid({
-        ...isValid,
-        birthdate: false,
-      });
     else
       setIsValid({
         ...isValid,
-        birthdate: true,
+        email: false,
       });
-
-    if (
-      (!isEmpty(formData.OldPassword) && isEmpty(formData.Password)) ||
-      (isEmpty(formData.OldPassword) && !isEmpty(formData.Password))
-    ) {
-      console.log(formData.OldPassword);
-      console.log(formData.Password);
-      setAlert({
-        message:
-          "For changing password you must fill old and new password field!",
-        severity: "error",
-      });
-      return;
-    }
 
     const formIsValid = Object.values(isValid).every((value) => value === true);
     if (!formIsValid) {
-      setAlert({
-        message: "You must fill in all fields",
-        severity: "error",
-      });
+      alert("You must fill in all fields");
       return;
     }
 
+    const date = new Date(localDate.toString());
+    console.log('date', date);
+    console.log('localdate', localDate.toString());
+    setData({ ...data, BirthDate: localDate.toString() });
+
+    const formData = new FormData();
+    formData.append("Username", data.Username);
+    formData.append("Email", data.Email);
+    formData.append("OldPasswordUpdate", data.OldPassword);
+    formData.append("PasswordUpdate", data.Password);
+    formData.append("FirstName", data.FirstName);
+    formData.append("LastName", data.LastName);
+    formData.append("BirthDate", localDate.toString());
+    formData.append("Address", data.Address);
+    formData.append("ImageForm", data.ImageForm);
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+        }
+
     try {
-      const response = await update(formData);
-      console.log(response);
-      console.log("usao");
-      setAlert({
-        message: "You updated yours profile settings!",
-        severity: "success",
-      });
+      const response =  await update(formData);
+      alert("You updated yours profile settings!");
+      //window.location.reload();
     } catch (error) {
-      setAlert({
-        message: exceptionRead(error.response.data),
-        severity: "error",
-      });
-      return;
+      console.log('error', error);
+      if (error) alert(exceptionRead(error.response.data));
     }
-    console.log(isValid);
   };
 
   return (
@@ -181,171 +316,197 @@ const Profile = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
+          height: "130vh",
           backgroundColor: "#243b55",
         }}
       >
-        {alert.message !== "" && (
-          <Alert
-            className={styles.alert_register}
-            onClose={() => setAlert({ message: "", severity: "success" })}
-          >
-            <AlertTitle>
-              {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-            </AlertTitle>
-            {alert.message}
-          </Alert>
-        )}
-        <form onSubmit={submitHandler}>
-          <h2 className={styles["h2"]}>PROFILE</h2>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="First Name"
-              name="FirstName"
-              value={formData.FirstName}
-              error={!isValid.firstName}
-              helperText={!isValid.firstName && "Please enter your first name"}
-              onChange={(e) =>
-                setFormData({ ...formData, FirstName: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Last Name"
-              name="LastName"
-              value={formData.LastName}
-              error={!isValid.lastName}
-              helperText={!isValid.lastName && "Please enter your last name"}
-              onChange={(e) =>
-                setFormData({ ...formData, LastName: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Username"
-              name="Username"
-              value={formData.Username}
-              error={!isValid.username}
-              helperText={!isValid.username && "Please enter a username"}
-              onChange={(e) =>
-                setFormData({ ...formData, Username: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Email"
-              name="Email"
-              value={formData.Email}
-              error={!isValid.email}
-              helperText={!isValid.email && "Please enter a valid email"}
-              onChange={(e) =>
-                setFormData({ ...formData, Email: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Old Password"
-              name="oldPassword"
-              type="password"
-              error={!isValid.oldPassword}
-              helperText={
-                !isValid.oldPassword && "Please enter your old password"
-              }
-              onChange={(e) =>
-                setFormData({ ...formData, OldPassword: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="New Password"
-              name="password"
-              type="password"
-              error={!isValid.password}
-              helperText={!isValid.password && "Please enter a new password"}
-              onChange={(e) =>
-                setFormData({ ...formData, Password: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Address"
-              name="Address"
-              value={formData.Address}
-              error={!isValid.address}
-              helperText={!isValid.address && "Please enter your address"}
-              onChange={(e) =>
-                setFormData({ ...formData, Address: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <TextField
-              sx={{ background: "white" }}
-              label="Birthdate"
-              name="birthdate"
-              type="date"
-              value={formData.BirthDate}
-              error={!isValid.birthdate}
-              helperText={!isValid.birthdate && "Please enter your birthdate"}
-              onChange={(e) =>
-                setFormData({ ...formData, BirthDate: e.target.value })
-              }
-            />
-          </Box>
-          <Box sx={{ m: 2 }}>
-            <input
-              accept="image/*"
-              id="upload-image"
-              type="file"
-              onChange={(e) =>
-                setFormData({ ...formData, Image: e.target.value })
-              }
-              style={{ display: "none" }}
-            />
-            <label htmlFor="upload-image">
-              <Button component="span" variant="outlined">
-                Upload New Profile Picture
-              </Button>
-            </label>
-          </Box>
-          {selectedImage && (
-            <Box sx={{ m: 2 }}>
-              <img
-                // src={URL.createObjectURL(selectedImage)}
-                alt="Selected"
-                style={{ width: "100px", height: "100px" }}
-              />
+        <ThemeProvider theme={defaultTheme}>
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Box
+              sx={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5" sx={{ color: "white" }}>
+                Update profile
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={submitHandler}
+                sx={{ mt: 3 }}
+              >
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      autoComplete="given-name"
+                      name="firstName"
+                      required
+                      fullWidth
+                      id="firstName"
+                      label="First Name"
+                      autoFocus
+                      value={data.FirstName}
+                      error={!isValid.firstname}
+                      onBlur={firstnameBlurHandler}
+                      onChange={(e) =>
+                        setData({ ...data, FirstName: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      required
+                      fullWidth
+                      id="lastName"
+                      label="Last Name"
+                      name="lastName"
+                      autoComplete="family-name"
+                      value={data.LastName}
+                      error={!isValid.lastname}
+                      onBlur={lastnameBlurHandler}
+                      onChange={(e) =>
+                        setData({ ...data, LastName: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      required
+                      fullWidth
+                      id="username"
+                      label="Username"
+                      name="username"
+                      autoComplete="username"
+                      value={data.Username}
+                      error={!isValid.username}
+                      onBlur={usernameBlurHandler}
+                      onChange={(e) =>
+                        setData({ ...data, Username: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      value={data.Email}
+                      error={!isValid.email}
+                      onBlur={emailBlurHandler}
+                      onChange={(e) =>
+                        setData({ ...data, Email: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      fullWidth
+                      name="oldPassword"
+                      label="Old password"
+                      type="password"
+                      id="oldPassword"
+                      autoComplete="new-password"
+                      value={data.OldPassword}
+                      error={!isValid.oldPassword}
+                      onChange={(e) =>
+                        setData({ ...data, OldPassword: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      fullWidth
+                      name="password"
+                      label="New password"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      value={data.Password}
+                      error={!isValid.password}
+                      onChange={(e) =>
+                        setData({ ...data, Password: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      inputProps={{ style: { color: "white" } }}
+                      InputLabelProps={{ style: { color: "white" } }}
+                      required
+                      fullWidth
+                      id="address"
+                      label="Address"
+                      name="address"
+                      autoComplete="address"
+                      value={data.Address}
+                      error={!isValid.address}
+                      onBlur={addressBlurHandler}
+                      onChange={(e) =>
+                        setData({ ...data, Address: e.target.value })
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        sx={{ backgroundColor: "white" }}
+                        required
+                        fullWidth
+                        name="birthdate"
+                        label="Birth Date"
+                        id="birthdate"
+                        value={dayjs(data.BirthDate)}
+                        error={!isValid.birthdate}
+                        onBlur={birthdateBlurHandler}
+                        onChange={handleDateChange}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ImageForm
+                      disabled={true}
+                      image={displayImage ? displayImage : userImage}
+                      imageInput={imageInput}
+                      uploadHandler={imageChangeHandler}
+                      avatarClickHandler={imageUploadHandler}
+                    ></ImageForm>
+                  </Grid>
+                </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Save
+                </Button>
+              </Box>
             </Box>
-          )}
-          <Button
-            type="submit"
-            sx={{
-              marginLeft: "25%",
-              color: "#141e30",
-              fontSize: "20px",
-              padding: "10px 20px",
-              "&:hover": {
-                backgroundColor: "#03e9f4",
-              },
-            }}
-            variant="contained"
-          >
-            Save
-          </Button>
-        </form>
+          </Container>
+        </ThemeProvider>
       </Box>
     </>
   );
