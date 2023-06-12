@@ -8,7 +8,6 @@ import {
 } from "../../services/UserService";
 import NavBar from "../NavBar/NavBar";
 
-
 const Verification = () => {
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const [user, setUser] = useState(null);
@@ -39,7 +38,7 @@ const Verification = () => {
   const handleAcceptVerification = async (id) => {
     try {
       const response = await acceptVerification(id);
-      console.log('id', id);
+      console.log("id", id);
       console.log(response.data);
       setUser(response.data);
     } catch (error) {
@@ -87,14 +86,14 @@ const Verification = () => {
           return (
             <div>
               <Button
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={() => handleAcceptVerification(id)}
               >
                 ACCEPT
               </Button>
               <Button
-                variant="outlined"
+                variant="contained"
                 color="secondary"
                 onClick={() => handleDenyVerification(id)}
               >
@@ -112,12 +111,13 @@ const Verification = () => {
     <>
       {alert.message !== "" && (
         <Alert
-        sx={{  
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          width: 'auto'}}
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            width: "auto",
+          }}
           onClose={() => setAlert({ message: "", severity: "success" })}
         >
           <AlertTitle>
@@ -137,6 +137,7 @@ const Verification = () => {
         }}
       >
         <DataGrid
+         sx={{ color: "white", textAlign: "center" }}
           rows={salesmans}
           columns={columns}
           initialState={{

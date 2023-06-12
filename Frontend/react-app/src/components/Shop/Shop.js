@@ -12,10 +12,6 @@ const Shop = () => {
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const [products, setProducts] = useState([]);
   const [openCart, setOpenCart] = useState(false);
-  const [alert, setAlert] = useState({
-    message: "",
-    severity: "success",
-  });
 
   const img = "data:image/*;base64,";
   const imgUrl = process.env.PUBLIC_URL + "/product.jpg";
@@ -27,16 +23,13 @@ const Shop = () => {
         setProducts(response.data);
         console.log(response.data);
       } catch (error) {
-        setAlert({
-          message: exceptionRead(error.response.data),
-          severity: "error",
-        });
+        if (error) alert(exceptionRead(error.response.data));
         return;
       }
     };
 
     fetchData();
-  }, []);
+  }, [openCart]);
 
   const openCartHandler = () => {
     setOpenCart(true);
@@ -128,24 +121,7 @@ const Shop = () => {
   ];
 
   return (
-    <>
-      {alert.message !== "" && (
-        <Alert
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            width: "auto",
-          }}
-          onClose={() => setAlert({ message: "", severity: "success" })}
-        >
-          <AlertTitle>
-            {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-          </AlertTitle>
-          {alert.message}
-        </Alert>
-      )}
+    <>      
       <NavBar />
       <Box
         sx={{

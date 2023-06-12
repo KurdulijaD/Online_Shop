@@ -64,17 +64,12 @@ const NewProduct = ({ open, onClose }) => {
     formData.append("Amount", data.Amount);
     formData.append("Price", data.Price);
     formData.append("ImageForm", data.ImageForm);
-    console.log(formData.get('Name'));
-    console.log(formData);
 
     const addProduct = async () => {
       try {
         const response = await createNewProduct(formData).then(() => {onClose();});
       } catch (error) {
-        setAlert({
-          message: error.response.data,
-          severity: "error",
-        });
+        if (error) alert(exceptionRead(error.response.data));
         return;
       }
     };

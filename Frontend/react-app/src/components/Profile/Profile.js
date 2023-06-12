@@ -20,17 +20,12 @@ import dayjs from "dayjs";
 const isNotEmpty = (value) => value.trim() !== "";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const exceptionRead = (value) => value.split(":")[1].split("at")[0];
-const byteArrayToFile = (byteArray) => {
-  const blob = new Blob([byteArray], { type: "image/jpeg" });
-  const file = new File([blob], 'slika.jpg', { type: "image/jpeg" });
-  return file;
-};
 const defaultTheme = createTheme();
 
 const Profile = () => {
   const navigate = useNavigate();
   const [displayImage, setDisplayImage] = useState(null);
-  const [userImage, setUserImage] = useState('');
+  const [userImage, setUserImage] = useState("");
   const imageInput = useRef(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [localDate, setLocalDate] = useState(null);
@@ -99,10 +94,10 @@ const Profile = () => {
         const response = await getMyProfile();
         console.log("OVO", response.data.birthDate);
         let initialDateString = response.data.birthDate;
-        let initialDatePart = initialDateString.split('T');
-        let initialDateParts = initialDatePart[0].split('-');
+        let initialDatePart = initialDateString.split("T");
+        let initialDateParts = initialDatePart[0].split("-");
         console.log(initialDateParts);
-        let initialDate = new Date(initialDatePart[0])
+        let initialDate = new Date(initialDatePart[0]);
         //let initialDate = new Date(initialDateParts[0], initialDateParts[1], initialDateParts[2]);
         setSelectedDate(initialDate);
         const imageSrc = `data:image/*;base64,` + response.data.image;
@@ -116,10 +111,6 @@ const Profile = () => {
           BirthDate: initialDate,
           Address: response.data.address,
         });
-        console.log(response.data);
-        console.log(response.data.image);
-        console.log(data.ImageForm);
-
       } catch (error) {
         if (error.response) alert(exceptionRead(error.response.data));
         return;
@@ -280,8 +271,6 @@ const Profile = () => {
     }
 
     const date = new Date(localDate.toString());
-    console.log('date', date);
-    console.log('localdate', localDate.toString());
     setData({ ...data, BirthDate: localDate.toString() });
 
     const formData = new FormData();
@@ -294,16 +283,11 @@ const Profile = () => {
     formData.append("BirthDate", localDate.toString());
     formData.append("Address", data.Address);
     formData.append("ImageForm", data.ImageForm);
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-        }
 
     try {
-      const response =  await update(formData);
+      const response = await update(formData);
       alert("You updated yours profile settings!");
-      //window.location.reload();
     } catch (error) {
-      console.log('error', error);
       if (error) alert(exceptionRead(error.response.data));
     }
   };

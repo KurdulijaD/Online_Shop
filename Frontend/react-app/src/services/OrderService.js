@@ -18,7 +18,7 @@ export const getSalesmanInProgressOrders = async () => {
 };
 
 export const createOrder = async (orderData) => {
-  return await api.post(`/order/CreateOrder`, orderData);
+  return await api.post(`/order/create-order`, orderData);
 };
 
 export const denyOrder = async (id) => {

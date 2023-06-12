@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NewProduct from "./NewProduct/NewProduct";
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Avatar,
@@ -24,10 +22,7 @@ const Product = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [change, setChange] = useState(false);
-  const [alert, setAlert] = useState({
-    message: "",
-    severity: "success",
-  });
+
   const img = "data:image/*;base64,";
   const imgUrl = process.env.PUBLIC_URL + "/product.jpg";
 
@@ -36,12 +31,8 @@ const Product = () => {
       try {
         const response = await getMyProducts();
         setProducts(response.data);
-        console.log(response.data);
       } catch (error) {
-        setAlert({
-          message: exceptionRead(error.response.data),
-          severity: "error",
-        });
+       if (error) alert(exceptionRead(error.response.data));
         return;
       }
     };
@@ -56,7 +47,6 @@ const Product = () => {
   const handleCloseNewProduct = () => {
     setNewProductOpen(false);
     setChange(!change);
-    console.log('usao je ovdje laze');
   };
 
   const handleUpdateProduct = (id) => {
@@ -64,14 +54,9 @@ const Product = () => {
     const fetchData = async () => {
       try {
         const response = await getProductById(id);
-        console.log(response);
         setSelectedProduct(response.data);
-        console.log(response.data);
       } catch (error) {
-        setAlert({
-          message: exceptionRead(error.response.data),
-          severity: "error",
-        });
+        if (error) alert(exceptionRead(error.response.data));
         return;
       }
     };
@@ -84,16 +69,11 @@ const Product = () => {
   };
 
   const handleDeleteProduct = async (id) => {
-    console.log('ID', id);
     try {
       const response = await deleteProduct(id);
-      console.log(response);
       setChange(!change);
     } catch (error) {
-      setAlert({
-        message: error.response.data,
-        severity: "error",
-      });
+      if (error) alert(exceptionRead(error.response.data));
       return;
     }
   };
@@ -106,11 +86,10 @@ const Product = () => {
       width: 250,
       sortable: false,
       renderCell: (params) => {
-        const { Image } = params.row;
         return (
           <div>
             <Avatar
-              src={Image !== "" ? img + Image : imgUrl}
+              src={Image !== "" ? img + params.row.image : imgUrl}
               style={{ width: "100%", height: "auto" }}
             ></Avatar>
           </div>
@@ -122,15 +101,20 @@ const Product = () => {
     { field: "amount", headerName: "Amount", width: 100 },
     { field: "price", headerName: "Price", width: 100 },
     {
-      field: (
+      field: 'productButton',
+      headerName: '',
+      width: 150,
+      sortable: false,
+      disableColumnMenu: true,
+      headerAlign: 'right',
+      renderHeader: () => (
         <Button
           variant="contained"
           color="primary"
-          className="addButton"
           onClick={() => handleAddProduct()}
-          sx={{ mt: 0 }}
+          sx={{ m: 1 }}
         >
-          Add New Product
+          Add new product
         </Button>
       ),
       width: 230,
@@ -161,23 +145,6 @@ const Product = () => {
 
   return (
     <>
-      {alert.message !== "" && (
-        <Alert
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            width: "auto",
-          }}
-          onClose={() => setAlert({ message: "", severity: "success" })}
-        >
-          <AlertTitle>
-            {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-          </AlertTitle>
-          {alert.message}
-        </Alert>
-      )}
       <NavBar />
       <Box
         sx={{

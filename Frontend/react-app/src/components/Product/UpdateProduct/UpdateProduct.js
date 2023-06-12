@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -15,17 +15,23 @@ import {
 const UpdateProduct = ({ open, onClose, product }) => {
   console.log("ovaj ispis", product);
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
-  const [alert, setAlert] = useState({
-    message: "",
-    severity: "success",
-  });
   const [data, setData] = useState({
-    Name: "",
-    Description: "",
-    Amount: 0,
-    Price: 0,
+    Name: product.name,
+    Description: product.description,
+    Amount: product.amount,
+    Price: product.price,
     ImageForm: "",
   });
+
+  useEffect(() => {
+    setData({
+      ...data,
+      Name: product.name,
+      Description: product.description,
+      Amount: product.amount,
+      Price: product.price,
+    })
+  }, [product]);
 
   const [displayImage, setDisplayImage] = useState(
     process.env.PUBLIC_URL + "/product.jpg"
@@ -59,7 +65,7 @@ const UpdateProduct = ({ open, onClose, product }) => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append("Name", data.Name);
@@ -68,25 +74,16 @@ const UpdateProduct = ({ open, onClose, product }) => {
     formData.append("Price", data.Price);
     formData.append("ImageForm", data.ImageForm);
 
-    console.log(formData);
-
-    const addProduct = async () => {
       try {
-        const response = await updateProduct(product.id, formData);
+        const response = await updateProduct(formData).then(() => {onClose();});
       } catch (error) {
-        setAlert({
-          message: exceptionRead(error.response.data),
-          severity: "error",
-        });
+        if (error) alert(exceptionRead(error.response.data));
         return;
       }
-    };
-    addProduct();
-    onClose();
+    updateProduct();
   };
 
   return (
-    <>
       <Modal open={open} onClose={onClose}>
         <Typography component="h1" variant="h5">
           Create product
@@ -126,7 +123,7 @@ const UpdateProduct = ({ open, onClose, product }) => {
                   id="name"
                   label="Name"
                   autoFocus
-                  defaultValue={product.name}
+                  defaultValue={product && product.name}
                   onChange={(e) => setData({ ...data, Name: e.target.value })}
                 />
               </Grid>
@@ -140,7 +137,7 @@ const UpdateProduct = ({ open, onClose, product }) => {
                   label="Description"
                   name="description"
                   autoComplete="description"
-                  defaultValue={product.description}
+                  defaultValue={product && product.description}
                   onChange={(e) =>
                     setData({ ...data, Description: e.target.value })
                   }
@@ -157,7 +154,7 @@ const UpdateProduct = ({ open, onClose, product }) => {
                   type="number"
                   id="amount"
                   autoComplete="amount"
-                  defaultValue={product.amount}
+                  defaultValue={product && product.amount}
                   onChange={(e) => setData({ ...data, Amount: e.target.value })}
                 />
               </Grid>
@@ -172,7 +169,7 @@ const UpdateProduct = ({ open, onClose, product }) => {
                   type="price"
                   id="price"
                   autoComplete="price"
-                  defaultValue={product.price}
+                  defaultValue={product && product.price}
                   onChange={(e) => setData({ ...data, Price: e.target.value })}
                 />
               </Grid>
@@ -226,7 +223,6 @@ const UpdateProduct = ({ open, onClose, product }) => {
           </Box>
         </Box>
       </Modal>
-    </>
   );
 };
 

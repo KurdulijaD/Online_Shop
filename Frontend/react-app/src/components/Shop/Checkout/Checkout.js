@@ -4,22 +4,23 @@ import { createOrder } from "../../../services/OrderService";
 import CartContext from "../../../contexts/cart-context";
 
 const Checkout = ({ open, onClose }) => {
+  const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const cartCtx = useContext(CartContext);
   const [data, setData] = useState({
-    OrderProducts: cartCtx.items.map(item => ({
-        ProductId: item.id,
-        Amount: item.amount
-      })),
+    OrderProducts: cartCtx.items.map((item) => ({
+      ProductId: item.id,
+      Amount: item.amount,
+    })),
     Address: "",
     Comment: "",
   });
 
   const handleSubmit = async () => {
-    console.log('OVAJ ISPIS', data);
     try {
       const response = await createOrder(data);
     } catch (error) {
-      alert(error);
+      if (error) alert(exceptionRead(error.response.data));
+      return;
     }
   };
   return (

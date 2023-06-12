@@ -12,9 +12,7 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Paper,
-  Alert,
-  AlertTitle
+  Paper
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -42,48 +40,61 @@ function Row({ row }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">{row.id}</TableCell>
-        <TableCell align="center">{row.comment}</TableCell>
-        <TableCell align="center">{row.address}</TableCell>
-        <TableCell align="center">{row.price}</TableCell>
-        <TableCell align="center">{row.orderTime.split(".")[0]}</TableCell>
-        <TableCell align="center">{row.deliveryTime.split(".")[0]}</TableCell>
-        <TableCell align="center">{row.status}</TableCell>
+        <TableCell component="th" scope="row" sx={{ color: "white" }}> 
+          {row.id}
+        </TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.comment}</TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.address}</TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.price}</TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.orderTime.split(".")[0]}</TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.deliveryTime.split(".")[0]}</TableCell>
+        <TableCell align="center" sx={{ color: "white" }}>{row.status}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
+              <Typography variant="h6" gutterBottom component="div" sx={{ color: "white" }}>
                 Details
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">Name</TableCell>
-                    <TableCell align="center">Description</TableCell>
-                    <TableCell align="center">Price</TableCell>
-                    <TableCell align="center">Amount</TableCell>
-                    <TableCell align="right">Total price (RSD)</TableCell>
+                    <TableCell align="center" sx={{ color: "white" }}>
+                      Name
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "white" }}>
+                      {" "}
+                      Description
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "white" }}>
+                      Price
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "white" }}>
+                      Amount
+                    </TableCell>
+                    <TableCell align="right" sx={{ color: "white" }}>
+                      Total price (RSD)
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.orderProducts.map((orderProduct) => (
                     <TableRow key={orderProduct.id}>
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ color: "white" }}>
                         {orderProduct.product.name}
                       </TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ color: "white" }}>
                         {orderProduct.product.description}
                       </TableCell>
-                      <TableCell align="center">
-                        {orderProduct.product.price}
+                      <TableCell align="center" sx={{ color: "white" }}>
+                        {orderProduct.product.price} RSD
                       </TableCell>
-                      <TableCell align="center">
-                        {orderProduct.amount}
+                      <TableCell align="center" sx={{ color: "white" }}>
+                        x{orderProduct.amount}
                       </TableCell>
-                      <TableCell align="right">
-                        {orderProduct.amount * orderProduct.product.price}
+                      <TableCell align="right" sx={{ color: "white" }}>
+                        {orderProduct.amount * orderProduct.product.price} RSD
                       </TableCell>
                     </TableRow>
                   ))}
@@ -105,7 +116,7 @@ Row.propTypes = {
     price: PropTypes.number.isRequired,
     orderTime: PropTypes.string.isRequired,
     deliveryTime: PropTypes.string.isRequired,
-    status: PropTypes.number.isRequired,
+    status: PropTypes.string.isRequired,
     orderProducts: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
@@ -116,7 +127,6 @@ Row.propTypes = {
           price: PropTypes.number.isRequired,
           amount: PropTypes.number.isRequired,
           description: PropTypes.string.isRequired,
-          image: PropTypes.string, // Adjust the type if necessary
         }).isRequired,
       })
     ).isRequired,
@@ -128,10 +138,7 @@ Row.propTypes = {
 const Orders = () => {
   const exceptionRead = (value) => value.split(":")[1].split("at")[0];
   const [data, setData] = useState([]);
-  const [alert, setAlert] = useState({
-    message: "",
-    severity: "success",
-  });
+  const [delivered, setDelivered] = useState([]);
 
   const authCtx = useContext(AuthContext);
   const role = authCtx.role;
@@ -148,46 +155,46 @@ const Orders = () => {
           console.log("ovaj ispis", response.data);
           setData(response.data);
         } catch (error) {
-          setAlert({
-            message: exceptionRead(error.response.data),
-            severity: "error",
-          });
+          if (error) alert(exceptionRead(error.response.data));
           return;
         }
       }
-      else if (isSalesman) {
-        try {
-          const responseInProgress = await getSalesmanInProgressOrders();
-          console.log("ovaj ispis", responseInProgress.data);
-          setData(responseInProgress.data);
-          const responseDelivered = await getSalesmanDeliveredOrders();
-          setData((prevData) => ({
-            ...prevData,
-            ...responseDelivered.data,
-          }));
-        } catch (error) {
-          setAlert({
-            message: exceptionRead(error.response.data),
-            severity: "error",
-          });
-          return;
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        if (isSalesman) {
+          try {
+            const responseInProgress = await getSalesmanInProgressOrders();
+            console.log("ovaj ispis", responseInProgress.data);
+            setData(responseInProgress.data);
+            const responseDelivered = await getSalesmanDeliveredOrders();
+            setDelivered(responseDelivered);
+          } catch (error) {
+            if (error) alert(exceptionRead(error.response.data));
+            return;
+          }
         }
-      }
-      else if (isCustomer) {
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isCustomer) {
         try {
           const responseInProgress = await getCustomerInProgressOrders();
           console.log("ovaj ispis", responseInProgress.data);
           setData(responseInProgress.data);
           const responseDelivered = await getCustomerDeliveredOrders();
-          setData((prevData) => ({
-            ...prevData,
-            ...responseDelivered.data,
-          }));
+          // setData((data) => ({
+          //   ...data,
+          //   ...responseDelivered.data,
+          // }));
         } catch (error) {
-          setAlert({
-            message: exceptionRead(error.response.data),
-            severity: "error",
-          });
+          if (error) alert(exceptionRead(error.response.data));
           return;
         }
       }
@@ -197,22 +204,6 @@ const Orders = () => {
 
   return (
     <>
-      {alert.message !== "" && (
-        <Alert
-        sx={{  
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          width: 'auto'}}
-          onClose={() => setAlert({ message: "", severity: "success" })}
-        >
-          <AlertTitle>
-            {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
-          </AlertTitle>
-          {alert.message}
-        </Alert>
-      )}
       <NavBar />
       <Box
         sx={{
@@ -236,19 +227,32 @@ const Orders = () => {
               <TableHead>
                 <TableRow>
                   <TableCell />
-                  <TableCell>Id</TableCell>
-                  <TableCell align="center">Comment</TableCell>
-                  <TableCell align="center">Address</TableCell>
-                  <TableCell align="center">Price</TableCell>
-                  <TableCell align="center">Order Time</TableCell>
-                  <TableCell align="center">Delivery Time</TableCell>
-                  <TableCell align="center">Status</TableCell>
+                  <TableCell sx={{ color: "white" }}>Id</TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Comment
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Address
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Price
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Order Time
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Delivery Time
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: "white" }}>
+                    Status
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.length > 0 && data.map((row) => (
-                  <Row key={row.id} row={row} />
-                ))}
+                {data.length > 0 &&
+                  data.map((row) => <Row key={row.id} row={row} />)}
+                  {delivered.length > 0 &&
+                  delivered.map((row) => <Row key={row.id} row={row} />)}
               </TableBody>
             </Table>
           </TableContainer>
