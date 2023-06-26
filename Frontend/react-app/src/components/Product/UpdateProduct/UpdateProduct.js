@@ -86,11 +86,10 @@ const UpdateProduct = ({ open, onClose, product }) => {
   return (
       <Modal open={open} onClose={onClose}>
         <Typography component="h1" variant="h5">
-          Create product
+          Update product
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <Box
-            noValidate
             sx={{
               backgroundColor: "#243b55",
               display: "flex",
